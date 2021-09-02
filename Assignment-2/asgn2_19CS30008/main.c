@@ -12,11 +12,13 @@ int main()
     printStr("*********************************************\n");
 
     printStr("\n******* Testing the printStr function *******\n");
+
     printStr("\nString #1 : ");
     char* str1 = "This is my own library.";
     int lenStr1 = printStr(str1);
     printStr("\nNo. of characters printed : ");
     printInt(lenStr1);
+
     printStr("\n\nString #2 : ");
     char* str2 = "Another test string";
     int lenStr2 = printStr(str2);
@@ -24,11 +26,13 @@ int main()
     printInt(lenStr2);
 
     printStr("\n\n******* Testing the printInt function *******\n");
+
     printStr("\nInteger #1 : ");
     int num1 = 5473816;
     int lenNum1 = printInt(num1);
     printStr("\nNo. of characters printed : ");
     printInt(lenNum1);
+
     printStr("\n\nInteger #2 : ");
     int num2 = -26859;
     int lenNum2 = printInt(num2);
@@ -36,11 +40,13 @@ int main()
     printInt(lenNum1);
 
     printStr("\n\n******* Testing the printFlt function *******\n");
+
     printStr("\nFloat #1 : ");
     float float1 = 11.78456;
     int lenFloat1 = printFlt(float1);
     printStr("\nNo. of characters printed : ");
     printInt(lenFloat1);
+
     printStr("\n\nFloat #2 : ");
     float float2 = -0.625;
     int lenFloat2 = printFlt(float2);
@@ -48,6 +54,7 @@ int main()
     printInt(lenFloat2);
 
     printStr("\n\n******** Testing the readInt function ********\n");
+
     printStr("\nEnter Integer #1 : ");
     int n1;
     int flag1 = readInt(&n1);
@@ -69,6 +76,7 @@ int main()
     }
 
     printStr("\n\n******** Testing the readFlt function ********\n");
+    
     printStr("\nEnter Float #1 : ");
     float f1;
     int flag3 = readFlt(&f1);
