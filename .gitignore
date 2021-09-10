@@ -3,4 +3,6 @@
 *.a
 *.out
 *.zip
+lex.yy.c
 Slides/
+Assignment-3/ass3_19CS10064_19CS30008/output.txt

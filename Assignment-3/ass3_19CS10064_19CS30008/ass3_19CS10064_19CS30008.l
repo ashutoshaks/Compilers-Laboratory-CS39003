@@ -49,19 +49,18 @@ WS                              [ \t\n]
 {PUNCTUATOR}                    { return PUNCTUATOR; }
 {INTEGER_CONSTANT}              { return INTEGER_CONSTANT; }
 {FLOATING_CONSTANT}             { return FLOATING_CONSTANT; }
-{ENUM_CONSTANT}                 { return ENUM_CONSTANT; }
 {CHAR_CONSTANT}                 { return CHAR_CONSTANT; }
 {STRING_LITERAL}                { return STRING_LITERAL; }
-{WS}                            /* ignore whitespaces */
+{WS}                            { /* ignore whitespaces */ }
 
 "//"                            { BEGIN(SINGLE_LINE_COMMENT); return SINGLE_LINE_COMMENT_START; }
-<SINGLE_LINE_COMMENT>.          /* eat up the comment */
+<SINGLE_LINE_COMMENT>.          { /* eat up the comment */ }
 <SINGLE_LINE_COMMENT>\n         { BEGIN(INITIAL); return SINGLE_LINE_COMMENT_END; }
 <SINGLE_LINE_COMMENT><<EOF>>    { BEGIN(INITIAL); return SINGLE_LINE_COMMENT_END; }
 
 "/*"                            { BEGIN(MULTI_LINE_COMMENT); return MULTI_LINE_COMMENT_START; }
 <MULTI_LINE_COMMENT>"*/"        { BEGIN(INITIAL); return MULTI_LINE_COMMENT_END; }
-<MULTI_LINE_COMMENT>.           /* eat up the comment */
-<MULTI_LINE_COMMENT>\n          /* eat up the comment */
+<MULTI_LINE_COMMENT>.           { /* eat up the comment */ }
+<MULTI_LINE_COMMENT>\n          { /* eat up the comment */ }
 
 %%
