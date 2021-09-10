@@ -28,16 +28,16 @@ FLOATING_CONSTANT               ({FRACTIONAL_CONSTANT}{EXPONENT_PART}?)|({DIGIT_
 
 ENUM_CONSTANT                   {IDENTIFIER}
 
-ESCAPE_SEQUENCE                 "\\\'"|"\\\""|"\?"|"\\"|"\a"|"\b"|"\f"|"\n"|"\r"|"\t"|"\v"
-C_CHAR                          [\'\\\n]|{ESCAPE_SEQUENCE}
+ESCAPE_SEQUENCE                 \\['"?\\abfnrtv]
+C_CHAR                          [^\'\\\n]|{ESCAPE_SEQUENCE}
 C_CHAR_SEQUENCE                 {C_CHAR}+
 CHAR_CONSTANT                   \'({C_CHAR_SEQUENCE})\'
 
 CONSTANT                        {INTEGER_CONSTANT}|{FLOATING_CONSTANT}|{ENUM_CONSTANT}|{CHAR_CONSTANT}
 
-S_CHAR                          [\"\\\n]|{ESCAPE_SEQUENCE}
+S_CHAR                          [^\"\\\n]|{ESCAPE_SEQUENCE}
 S_CHAR_SEQUENCE                 {S_CHAR}+
-STRING_LITERAL                  \"({S_CHAR_SEQUENCE})\"
+STRING_LITERAL                  \"({S_CHAR_SEQUENCE}?)\"
 
 PUNCTUATOR                      "["|"]"|"("|")"|"{"|"}"|"."|"->"|"++"|"--"|"&"|"*"|"+"|"-"|"~"|"!"|"/"|"%"|"<<"|">>"|"<"|">"|"<="|">="|"=="|"!="|"^"|"|"|"&&"|"||"|"?"|":"|";"|"..."|"="|"*="|"/="|"%="|"+="|"-="|"<<="|">>="|"&="|"^="|"|="|","|"#"
 WS                              [ \t\n]
@@ -56,11 +56,11 @@ WS                              [ \t\n]
 
 "//"                            { BEGIN(SINGLE_LINE_COMMENT); return SINGLE_LINE_COMMENT_START; }
 <SINGLE_LINE_COMMENT>.          /* eat up the comment */
-<SINGLE_LINE_COMMENT>\n         { BEGIN(INTIAL); return SINGLE_LINE_COMMENT_END; }
-<SINGLE_LINE_COMMENT><<EOF>>    { BEGIN(INTIAL); return SINGLE_LINE_COMMENT_END; }
+<SINGLE_LINE_COMMENT>\n         { BEGIN(INITIAL); return SINGLE_LINE_COMMENT_END; }
+<SINGLE_LINE_COMMENT><<EOF>>    { BEGIN(INITIAL); return SINGLE_LINE_COMMENT_END; }
 
 "/*"                            { BEGIN(MULTI_LINE_COMMENT); return MULTI_LINE_COMMENT_START; }
-<MULTI_LINE_COMMENT>"*/"        { BEGIN(INTIAL); return MULTI_LINE_COMMENT_END; }
+<MULTI_LINE_COMMENT>"*/"        { BEGIN(INITIAL); return MULTI_LINE_COMMENT_END; }
 <MULTI_LINE_COMMENT>.           /* eat up the comment */
 <MULTI_LINE_COMMENT>\n          /* eat up the comment */
 
