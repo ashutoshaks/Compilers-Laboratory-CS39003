@@ -1,20 +1,22 @@
+/* C Declarations and Definitions */
 %{
     #define KEYWORD 260
     #define IDENTIFIER 261
     #define INTEGER_CONSTANT 262
     #define FLOATING_CONSTANT 263
-    #define ENUM_CONSTANT 264
-    #define CHAR_CONSTANT 265
-    #define STRING_LITERAL 266
-    #define PUNCTUATOR 267
-    #define SINGLE_LINE_COMMENT_START 268
-    #define SINGLE_LINE_COMMENT_END 269
-    #define MULTI_LINE_COMMENT_START 270
-    #define MULTI_LINE_COMMENT_END 271
+    #define CHAR_CONSTANT 264
+    #define STRING_LITERAL 265
+    #define PUNCTUATOR 266
+    #define SINGLE_LINE_COMMENT_START 267
+    #define SINGLE_LINE_COMMENT_END 268
+    #define MULTI_LINE_COMMENT_START 269
+    #define MULTI_LINE_COMMENT_END 270
 %}
 
 %x SINGLE_LINE_COMMENT
 %x MULTI_LINE_COMMENT
+
+/* Regular Expression Definitions */
 
 KEYWORD                         "auto"|"break"|"case"|"char"|"const"|"continue"|"default"|"do"|"double"|"else"|"enum"|"extern"|"float"|"for"|"goto"|"if"|"inline"|"int"|"long"|"register"|"restrict"|"return"|"short"|"signed"|"sizeof"|"static"|"struct"|"switch"|"typedef"|"union"|"unsigned"|"void"|"volatile"|"while"|"_Bool"|"_Complex"|"_Imaginary"
 IDENTIFIER                      [_a-zA-Z][_a-zA-Z0-9]*
@@ -42,6 +44,7 @@ STRING_LITERAL                  \"({S_CHAR_SEQUENCE}?)\"
 PUNCTUATOR                      "["|"]"|"("|")"|"{"|"}"|"."|"->"|"++"|"--"|"&"|"*"|"+"|"-"|"~"|"!"|"/"|"%"|"<<"|">>"|"<"|">"|"<="|">="|"=="|"!="|"^"|"|"|"&&"|"||"|"?"|":"|";"|"..."|"="|"*="|"/="|"%="|"+="|"-="|"<<="|">>="|"&="|"^="|"|="|","|"#"
 WS                              [ \t\n]
 
+/* Definitions of Rules and Actions */
 %%
 
 {KEYWORD}                       { return KEYWORD; }

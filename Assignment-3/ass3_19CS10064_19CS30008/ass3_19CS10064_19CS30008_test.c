@@ -1,12 +1,11 @@
 /* Test File */
-#include "myl.h"
-#define ASSGN 3
 
 typedef unsigned long long ull;
 
 static const double pi = 3.14;
-auto Bool b = true;
-enum week {Mon = 1, Tue, Wed, Thur, Fri, Sat, Sun};
+auto b = 5;
+_Bool x = 1;
+enum week { Mon = 1, Tue, Wed, Thur, Fri, Sat, Sun };
 
 struct node {
     int value;
@@ -75,23 +74,25 @@ void main ()
 		default:;
     }
 
+    int n, t;
     do {
         n -= 1;
-    } while (n > 1)
+    } while (n > 1);
 
-    for (int i = 0; (i < 3 && i >= 0) || (i > 100 && i != 101); i++) {
+    for(int i = 0; (i < 3 && i >= 0) || (i > 100 && i != 101); i++) {
     	continue;
     }
  
     if (t <= 30) {
-        break;
+        t = 31;
     } else {
     	t = 30;
     }
 
-    //	testing comments
+    // Testing comments
 
-    // this is a single line comment
-    /* this comment is a multi line comment. 
-    We will briefly check one single line just after this! */
+    // This is a single line comment
+
+    /* This comment is a multi-line comment. 
+     * Second line of the multi line comment */
 }
