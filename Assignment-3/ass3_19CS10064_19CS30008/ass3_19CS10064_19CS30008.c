@@ -40,7 +40,7 @@ int main()
                 break;
 
             case SINGLE_LINE_COMMENT_END: 
-                printf("<SINGLE_LINE_COMMENT_END, %d, %s>\n", token, yytext);
+                printf("<SINGLE_LINE_COMMENT_END, %d, %s>\n", token, "\"\\n\"");
                 break;
 
             case MULTI_LINE_COMMENT_START: 

@@ -1,3 +1,4 @@
+/* C Declarations and Definitions */
 %{
     #define KEYWORD 260
     #define IDENTIFIER 261
@@ -15,6 +16,8 @@
 
 %x SINGLE_LINE_COMMENT
 %x MULTI_LINE_COMMENT
+
+/* Regular Expression Definitions */
 
 KEYWORD                         "auto"|"break"|"case"|"char"|"const"|"continue"|"default"|"do"|"double"|"else"|"enum"|"extern"|"float"|"for"|"goto"|"if"|"inline"|"int"|"long"|"register"|"restrict"|"return"|"short"|"signed"|"sizeof"|"static"|"struct"|"switch"|"typedef"|"union"|"unsigned"|"void"|"volatile"|"while"|"_Bool"|"_Complex"|"_Imaginary"
 IDENTIFIER                      [_a-zA-Z][_a-zA-Z0-9]*
@@ -42,6 +45,7 @@ STRING_LITERAL                  \"({S_CHAR_SEQUENCE}?)\"
 PUNCTUATOR                      "["|"]"|"("|")"|"{"|"}"|"."|"->"|"++"|"--"|"&"|"*"|"+"|"-"|"~"|"!"|"/"|"%"|"<<"|">>"|"<"|">"|"<="|">="|"=="|"!="|"^"|"|"|"&&"|"||"|"?"|":"|";"|"..."|"="|"*="|"/="|"%="|"+="|"-="|"<<="|">>="|"&="|"^="|"|="|","|"#"
 WS                              [ \t\n]
 
+/* Definitions of Rules and Actions */
 %%
 
 {KEYWORD}                       { return KEYWORD; }
