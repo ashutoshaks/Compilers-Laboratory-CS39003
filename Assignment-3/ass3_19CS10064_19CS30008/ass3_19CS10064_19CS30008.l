@@ -1,5 +1,6 @@
 /* C Declarations and Definitions */
 %{
+    #include <stdio.h>
     #define KEYWORD 260
     #define IDENTIFIER 261
     #define INTEGER_CONSTANT 262
@@ -21,7 +22,7 @@
 KEYWORD                         "auto"|"break"|"case"|"char"|"const"|"continue"|"default"|"do"|"double"|"else"|"enum"|"extern"|"float"|"for"|"goto"|"if"|"inline"|"int"|"long"|"register"|"restrict"|"return"|"short"|"signed"|"sizeof"|"static"|"struct"|"switch"|"typedef"|"union"|"unsigned"|"void"|"volatile"|"while"|"_Bool"|"_Complex"|"_Imaginary"
 IDENTIFIER                      [_a-zA-Z][_a-zA-Z0-9]*
 
-INTEGER_CONSTANT                [1-9][0-9]*|[0]+
+INTEGER_CONSTANT                [1-9][0-9]*|[0]
 
 DIGIT_SEQUENCE                  [0-9]+
 EXPONENT_PART                   [eE]([+-]?){DIGIT_SEQUENCE}

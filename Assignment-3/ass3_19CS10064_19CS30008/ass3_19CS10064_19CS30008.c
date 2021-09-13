@@ -1,5 +1,20 @@
 #include <stdio.h>
 
+#define KEYWORD 260
+#define IDENTIFIER 261
+#define INTEGER_CONSTANT 262
+#define FLOATING_CONSTANT 263
+#define CHAR_CONSTANT 264
+#define STRING_LITERAL 265
+#define PUNCTUATOR 266
+#define SINGLE_LINE_COMMENT_START 267
+#define SINGLE_LINE_COMMENT_END 268
+#define MULTI_LINE_COMMENT_START 269
+#define MULTI_LINE_COMMENT_END 270
+
+extern char* yytext;
+extern int yylex();
+
 int main() 
 {
     int token;
