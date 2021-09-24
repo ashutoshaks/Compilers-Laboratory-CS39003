@@ -19,10 +19,10 @@ lex.yy.c: $(BASE).l y.tab.h
 	flex $(BASE).l
 
 y.tab.c: $(BASE).y
-	bison -dtv $(BASE).y
+	bison -dty $(BASE).y
 
 y.tab.h: $(BASE).y
-	bison -dtv $(BASE).y
+	bison -dty $(BASE).y
 
 $(BASE).c:
 	touch $(BASE).c

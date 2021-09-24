@@ -1,20 +1,20 @@
 /* Test File */
 
-typedef unsigned long long ull;
+// typedef unsigned long long ull;
 
 static const double pi = 3.14;
 auto b = 5;
 _Bool x = 1;
 enum week { Mon = 1, Tue, Wed, Thur, Fri, Sat, Sun };
 
-struct node {
-    int value;
-	struct node* next;
-};
+// struct node {
+//     int value;
+// 	struct node* next;
+// };
 
-union test {
-	int p;
-};
+// union test {
+// 	int p;
+// };
 
 inline char toUpper (char ch);
 
@@ -63,10 +63,10 @@ void main ()
     a ^= b;
     a |= b, b = 0;
 
-    struct node *head;
-    if (!head) {
-    	head = head -> next;
-    }
+    // struct node *head;
+    // if (!head) {
+    // 	head = head -> next;
+    // }
 
     switch (_day) {
     	case 1:	

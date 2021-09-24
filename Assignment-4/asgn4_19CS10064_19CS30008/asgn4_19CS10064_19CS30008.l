@@ -74,20 +74,19 @@ WS                              [ \t\n]
 "_Imaginary"                    { return IMAGINARY; }
 
 {IDENTIFIER}                    { return IDENTIFIER; }
-{PUNCTUATOR}                    { return PUNCTUATOR; }
 {INTEGER_CONSTANT}              { return INTEGER_CONSTANT; }
 {FLOATING_CONSTANT}             { return FLOATING_CONSTANT; }
 {CHAR_CONSTANT}                 { return CHAR_CONSTANT; }
 {STRING_LITERAL}                { return STRING_LITERAL; }
 {WS}                            { /* ignore whitespaces */ }
 
-"//"                            { BEGIN(SINGLE_LINE_COMMENT); return SINGLE_LINE_COMMENT_START; }
+"//"                            { BEGIN(SINGLE_LINE_COMMENT); }
 <SINGLE_LINE_COMMENT>.          { /* eat up the comment */ }
-<SINGLE_LINE_COMMENT>\n         { BEGIN(INITIAL); return SINGLE_LINE_COMMENT_END; }
-<SINGLE_LINE_COMMENT><<EOF>>    { BEGIN(INITIAL); return SINGLE_LINE_COMMENT_END; }
+<SINGLE_LINE_COMMENT>\n         { BEGIN(INITIAL); }
+<SINGLE_LINE_COMMENT><<EOF>>    { BEGIN(INITIAL); }
 
-"/*"                            { BEGIN(MULTI_LINE_COMMENT); return MULTI_LINE_COMMENT_START; }
-<MULTI_LINE_COMMENT>"*/"        { BEGIN(INITIAL); return MULTI_LINE_COMMENT_END; }
+"/*"                            { BEGIN(MULTI_LINE_COMMENT); }
+<MULTI_LINE_COMMENT>"*/"        { BEGIN(INITIAL); }
 <MULTI_LINE_COMMENT>.           { /* eat up the comment */ }
 <MULTI_LINE_COMMENT>\n          { /* eat up the comment */ }
 
