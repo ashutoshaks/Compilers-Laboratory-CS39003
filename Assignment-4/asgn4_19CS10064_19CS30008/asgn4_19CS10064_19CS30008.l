@@ -3,6 +3,8 @@
     #include "y.tab.h"
 %}
 
+%option yylineno
+
 %x SINGLE_LINE_COMMENT
 %x MULTI_LINE_COMMENT
 
