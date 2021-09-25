@@ -1,11 +1,18 @@
 /* Test File */
 
+extern int value;
 static const double pi = 3.14;
 auto b = 5;
+volatile long y = 10;
 _Bool x = 1;
 enum week { Mon = 1, Tue, Wed, Thur, Fri, Sat, Sun };
 
-inline char toUpper (char ch);
+inline char toUpper(char ch)
+{
+    if(ch >= 'a' && ch <= 'z')
+        ch -= 32;
+    return ch;
+}
 
 int main()
 {
