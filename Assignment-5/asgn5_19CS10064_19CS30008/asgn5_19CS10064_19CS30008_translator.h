@@ -27,8 +27,8 @@ extern symbol* currentSymbol;
 extern symbolTable* currentST;
 extern symbolTable* globalST;
 extern quadArray quadList;
-extern int tableCount;
-extern string loopName;
+extern int STCount;
+extern string blockName;
 
 extern char* yytext;
 extern int yyparse();
@@ -53,7 +53,7 @@ public:
     int offset;
     symbolTable* nestedTable;
 
-    symbol(string name, string t = "INTEGER", symbolType* ptr = NULL, int width = 0);
+    symbol(string name, string t = "int", symbolType* ptr = NULL, int width = 0);
     symbol* update(symbolType* t);
 };
 
