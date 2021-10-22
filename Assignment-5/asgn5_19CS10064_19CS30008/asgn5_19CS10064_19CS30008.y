@@ -1256,19 +1256,91 @@ selection_statement:
 iteration_statement: 
         WHILE W PARENTHESIS_OPEN X change_table M expression PARENTHESIS_CLOSE M loop_statement
         {
-            
+            $$ = new statement();
+            convertIntToBool($7);
+            backpatch($10->nextlist, $6);
+            backpatch($7->truelist, $9);
+            $$->nextlist = $7->falselist;
+            emit("goto", convertIntToString($6));
+            blockName = "";
+            switchTable(currentST->parent);
         }
-        | DO statement WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMICOLON
+        | WHILE W PARENTHESIS_OPEN X change_table M expression PARENTHESIS_CLOSE CURLY_BRACE_OPEN M block_item_list_opt CURLY_BRACE_CLOSE
         {
-
+            $$ = new statement();
+            convertIntToBool($7);
+            backpatch($11->nextlist, $6);
+            backpatch($7->truelist, $10);
+            $$->nextlist = $7->falselist;
+            emit("goto", convertIntToString($6));
+            blockName = "";
+            switchTable(currentST->parent);
         }
-        | FOR PARENTHESIS_OPEN expression_opt SEMICOLON expression_opt SEMICOLON expression_opt PARENTHESIS_CLOSE statement
+        | DO D M loop_statement M WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMICOLON
         {
-
+            $$ = new statement();
+            convertIntToBool($8);
+            backpatch($8->truelist, $3)
+            backpatch($4->nextlist, $5);
+            $$->nextlist = $8->falselist;
+            blockName = "";
         }
-        | FOR PARENTHESIS_OPEN declaration expression_opt SEMICOLON expression_opt PARENTHESIS_CLOSE statement
+        | DO D CURLY_BRACE_OPEN M block_item_list_opt CURLY_BRACE_CLOSE M WHILE PARENTHESIS_OPEN expression PARENTHESIS_CLOSE SEMICOLON
         {
-
+            $$ = new statement();
+            convertIntToBool($10);
+            backpatch($10->truelist, $4)
+            backpatch($5->nextlist, $7);
+            $$->nextlist = $10->falselist;
+            blockName = "";
+        }
+        | FOR F PARENTHESIS_OPEN X change_table declaration M expression_statement M expression N PARENTHESIS_CLOSE M loop_statement
+        {
+            $$ = new statement();
+            convertIntToBool($8);
+            backpatch($8->truelist, $13);
+            backpatch($11->nextlist, $7);
+            backpatch($14->nextlist, $9);
+            emit("goto", convertIntToString($9));
+            $$->nextlist = $8->falselist;
+            blockName = "";
+            switchTable(currentST->parent);
+        }
+        | FOR F PARENTHESIS_OPEN X change_table expression_statement M expression_statement M expression N PARENTHESIS_CLOSE M loop_statement
+        {
+            $$ = new statement();
+            convertIntToBool($8);
+            backpatch($8->truelist, $13);
+            backpatch($11->nextlist, $7);
+            backpatch($14->nextlist, $9);
+            emit("goto", convertIntToString($9));
+            $$->nextlist = $8->falselist;
+            blockName = "";
+            switchTable(currentST->parent);
+        }
+        | FOR F PARENTHESIS_OPEN X change_table declaration M expression_statement M expression N PARENTHESIS_CLOSE M CURLY_BRACE_OPEN block_item_list_opt CURLY_BRACE_CLOSE
+        {
+            $$ = new statement();
+            convertIntToBool($8);
+            backpatch($8->truelist, $13);
+            backpatch($11->nextlist, $7);
+            backpatch($15->nextlist, $9);
+            emit("goto", convertIntToString($9));
+            $$->nextlist = $8->falselist;
+            blockName = "";
+            switchTable(currentST->parent);
+        }
+        | FOR F PARENTHESIS_OPEN X change_table expression_statement M expression_statement M expression N PARENTHESIS_CLOSE M CURLY_BRACE_OPEN block_item_list_opt CURLY_BRACE_CLOSE
+        {
+            $$ = new statement();
+            convertIntToBool($8);
+            backpatch($8->truelist, $13);
+            backpatch($11->nextlist, $7);
+            backpatch($15->nextlist, $9);
+            emit("goto", convertIntToString($9));
+            $$->nextlist = $8->falselist;
+            blockName = "";
+            switchTable(currentST->parent);
         }
         ;
 
