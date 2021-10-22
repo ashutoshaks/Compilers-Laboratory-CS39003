@@ -27,8 +27,8 @@ extern symbol* currentSymbol;
 extern symbolTable* currentST;
 extern symbolTable* globalST;
 extern quadArray quadList;
-extern int table_count;
-extern string loop_name;
+extern int tableCount;
+extern string loopName;
 
 extern char* yytext;
 extern int yyparse();

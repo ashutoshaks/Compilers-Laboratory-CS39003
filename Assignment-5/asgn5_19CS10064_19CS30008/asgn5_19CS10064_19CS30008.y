@@ -1,16 +1,27 @@
 %{
-    #include <stdio.h>
+    #include <iostream>
+    #include <sstream>
+    #include "asgn5_19CS10064_19CS30008_translator.h"
+    using namespace std;
+
     extern int yylex();
     void yyerror(char *s);
     extern char* yytext;
     extern int yylineno;
+    extern string varType;
 %}
 
 %union {
     int intval;
-    float floatval;
-    char charval;
-    char *strval;
+    char* charval;
+    int instr;
+    char unaryOp;
+    int numParams;
+    expression* expr;
+    statement* stmt;
+    symbol* symp;
+    symbolType* symType;
+    Array* arr;
 }
 
 %token AUTO BREAK CASE CHAR CONST CONTINUE DEFAULT DO DOUBLE ELSE ENUM EXTERN FLOAT FOR GOTO IF INLINE INT LONG REGISTER RESTRICT RETURN SHORT SIGNED SIZEOF STATIC STRUCT SWITCH TYPEDEF UNION UNSIGNED VOID VOLATILE WHILE BOOL COMPLEX IMAGINARY
@@ -21,18 +32,75 @@
 %token LOGICAL_AND LOGICAL_OR QUESTION_MARK COLON SEMICOLON ELLIPSIS 
 %token ASSIGN MULTIPLY_ASSIGN DIVIDE_ASSIGN MODULO_ASSIGN ADD_ASSIGN SUBTRACT_ASSIGN LSHIFT_ASSIGN RSHIFT_ASSIGN AND_ASSIGN XOR_ASSIGN OR_ASSIGN COMMA HASH
 
-%token IDENTIFIER
+%token <symp> IDENTIFIER
 %token <intval> INTEGER_CONSTANT
-%token <floatval> FLOATING_CONSTANT
+%token <charval> FLOATING_CONSTANT
 %token <charval> CHAR_CONSTANT
-%token <strval> STRING_LITERAL
-
-%nonassoc PARENTHESIS_CLOSE
-%nonassoc ELSE
+%token <charval> STRING_LITERAL
 
 %start translation_unit
 
+// to remove dangling else problem
+%right "then" ELSE
+
+%type <unaryOp> unary_operator
+
+%type <numParams> argument_expression_list argument_expression_list_opt
+
+%type <expr> 
+        expression
+        primary_expression 
+        multiplicative_expression
+        additive_expression
+        shift_expression
+        relational_expression
+        equality_expression
+        and_expression
+        exclusive_or_expression
+        inclusive_or_expression
+        logical_and_expression
+        logical_or_expression
+        conditional_expression
+        assignment_expression
+        expression_statement
+
+%type <stmt>
+        statement
+        compound_statement
+        loop_statement
+        selection_statement
+        iteration_statement
+        labeled_statement 
+        jump_statement
+        block_item
+        block_item_list
+        block_item_list_opt
+
+%type <symType> pointer
+
+%type <symp> initializer
+%type <symp> direct_declarator init_declarator declarator
+
+%type <arr> postfix_expression unary_expression cast_expression
+
+%type <instr> M
+%type <stmt> N
+
 %%
+
+M: %empty
+        {
+            $$ = nextinstr();
+        }
+        ;
+
+N: %empty
+        {
+            $$ = new statement();
+            $$->nextlist = makelist(nextinstr());
+            emit("goto", "");
+        }
+        ;
 
 primary_expression: IDENTIFIER
                         { printf("primary-expression --> identifier\n"); }
