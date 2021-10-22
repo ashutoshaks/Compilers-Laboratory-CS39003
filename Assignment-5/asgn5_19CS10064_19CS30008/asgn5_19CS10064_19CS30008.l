@@ -136,7 +136,7 @@ WS                              [ \t\n]
 ","                             { return COMMA; }
 "#"                             { return HASH; }
 
-{IDENTIFIER}                    { yylval.symp = table->lookup(yytext); return IDENTIFIER; }
+{IDENTIFIER}                    { yylval.symp = currentST->lookup(yytext); return IDENTIFIER; }
 {INTEGER_CONSTANT}              { yylval.intval = atoi(yytext); return INTEGER_CONSTANT; }
 {FLOATING_CONSTANT}             { yylval.charval = yytext; return FLOATING_CONSTANT; }
 {CHAR_CONSTANT}                 { yylval.charval = yytext; return CHAR_CONSTANT; }
