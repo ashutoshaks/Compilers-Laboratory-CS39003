@@ -40,7 +40,7 @@ public:
     int width;
     symbolType* arrType;
 
-    symbolType(string type, symbolType* ptr = NULL, int width = 1);
+    symbolType(string type_, symbolType* arrType_ = NULL, int width_ = 1);
 };
 
 
@@ -53,7 +53,7 @@ public:
     int offset;
     symbolTable* nestedTable;
 
-    symbol(string name, string t = "int", symbolType* ptr = NULL, int width = 0);
+    symbol(string name_, string t = "int", symbolType* arrType = NULL, int width = 0);
     symbol* update(symbolType* t);
 };
 
@@ -65,10 +65,10 @@ public:
     list<symbol> table;
     symbolTable* parent;
 
-    symbolTable(string name = "NULL");
+    symbolTable(string name_ = "NULL");
 
     symbol* lookup(string name);
-    static symbol* gentemp(symbolType* type, string initValue = "");
+    static symbol* gentemp(symbolType* t, string initValue = "");
 
     void print();
     void update();
@@ -82,9 +82,9 @@ public:
     string arg2;
     string result;
 
-    quad(string res, string arg1, string operation = "EQUAL", string arg2 = "");
-    quad(string res, int arg1, string operation = "EQUAL", string arg2 = "");
-    quad(string res, float arg1, string operation = "EQUAL", string arg2 = "");
+    quad(string res, string arg1_, string operation = "EQUAL", string arg2_ = "");
+    quad(string res, int arg1_, string operation = "EQUAL", string arg2_ = "");
+    quad(string res, float arg1_, string operation = "EQUAL", string arg2_ = "");
 
     void print();
 };
@@ -132,15 +132,15 @@ list<int> makelist(int i);
 
 list<int> merge(list<int> &list1, list<int> &list2);
 
-void backpatch(list<int> list, int i);
+void backpatch(list<int> l, int address);
 
 
-bool typecheck(symbol* s1, symbol* s2);
+bool typecheck(symbol* &s1, symbol* &s2);
 
 bool typecheck(symbolType* t1, symbolType* t2);
 
 
-symbol* convertType(symbol* s, string type);
+symbol* convertType(symbol* s, string t);
 
 string convertIntToString(int i);
 
@@ -157,8 +157,8 @@ void switchTable(symbolTable* newTable);
 int nextinstr();
 
 
-int sizeOfType(symbolType* type);
+int sizeOfType(symbolType* t);
 
-string checkType(symbolType* type);
+string checkType(symbolType* t);
 
 #endif

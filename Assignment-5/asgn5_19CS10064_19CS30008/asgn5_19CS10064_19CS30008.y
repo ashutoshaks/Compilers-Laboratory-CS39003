@@ -1222,13 +1222,6 @@ expression_statement:
         }
         ;
 
-expression_opt: 
-        expression
-        {}
-        |
-        {}
-        ;
-
 selection_statement: 
         IF PARENTHESIS_OPEN expression N PARENTHESIS_CLOSE M statement N %prec "then"
         {
