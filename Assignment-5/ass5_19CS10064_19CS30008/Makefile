@@ -1,4 +1,5 @@
 BASE=ass5_19CS10064_19CS30008
+DIR=./test-outputs
 
 a.out: lex.yy.o $(BASE).tab.o $(BASE)_translator.o
 	g++ lex.yy.o $(BASE).tab.o $(BASE)_translator.o -lfl
@@ -26,14 +27,15 @@ $(BASE).c:
 	touch $(BASE).c
 
 test: a.out
-	@echo "\nTest Inputs are in ./test-inputs. Running on test files\n"
+	mkdir -p $(DIR)
+	@echo "\nTest Inputs are in ./test-inputs. Running on test files.\n"
 	./a.out < test-inputs/$(BASE)_test1.c > test-outputs/$(BASE)_quads1.out
 	./a.out < test-inputs/$(BASE)_test2.c > test-outputs/$(BASE)_quads2.out
 	./a.out < test-inputs/$(BASE)_test3.c > test-outputs/$(BASE)_quads3.out
 	./a.out < test-inputs/$(BASE)_test4.c > test-outputs/$(BASE)_quads4.out
 	./a.out < test-inputs/$(BASE)_test5.c > test-outputs/$(BASE)_quads5.out
 	./a.out < test-inputs/$(BASE)_test6.c > test-outputs/$(BASE)_quads6.out
-	@echo "\nTest outputs generated and written to ./test-outputs!\n"
+	@echo "\nTest outputs generated and written to ./test-outputs.\n"
 
 clean:
 	rm -f lex.yy.c *.tab.c *.tab.h *.output *.o a.out *.gch test-outputs/*_quads*.out

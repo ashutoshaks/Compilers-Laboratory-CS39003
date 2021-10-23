@@ -19,6 +19,7 @@ quadArray quadList;
 int STCount;
 string blockName;
 
+// Used for storing the last encountered type
 string varType;
 
 // Implementations of constructors and functions for the symbolType class
