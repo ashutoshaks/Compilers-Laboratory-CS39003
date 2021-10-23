@@ -9,17 +9,16 @@ quadArray quadList;
 int STCount;
 string blockName;
 
+string var_type;
+
 
 symbolType::symbolType(string type_, symbolType* arrType_ = NULL, int width_ = 1):
     type(type_), width(width_), arrType(arrType_) {}
 
 
-symbol::symbol(string name_, string t, symbolType* arrType, int width): name(name_) {
+symbol::symbol(string name_, string t, symbolType* arrType, int width): name(name_), value("-"), offset(0), nestedTable(NULL) {
     type = new symbolType(t, arrType, width);
-    value = "-";
     size = sizeOfType(type);
-    offset = 0;
-    nestedTable = NULL;
 }
 
 
@@ -70,7 +69,6 @@ symbol* symbolTable::gentemp(symbolType* t, string initValue) {
 
 
 void symbolTable::print() {
-    list<symbolTable*> tableList;
     for(int i = 0; i < 120; i++) {
         cout << '-';
     }
@@ -95,6 +93,7 @@ void symbolTable::print() {
     }
     cout << endl;
 
+    list<symbolTable*> tableList;
     for(list<symbol>::iterator it = this->table.begin(); it != this->table.end(); it++) {
         cout << left << setw(20) << it->name;
         cout << left << setw(25) << checkType(it->type);
@@ -369,8 +368,8 @@ int sizeOfType(symbolType* t) {
         return __INTEGER_SIZE;
     else if(t->type == "ptr")
         return __POINTER_SIZE;
-    else if(t->type == "int")
-        return __INTEGER_SIZE;
+    else if(t->type == "float")
+        return __FLOAT_SIZE;
     else if(t->type == "arr")
         return t->width * sizeOfType(t->arrType);
     else if(t->type == "func")

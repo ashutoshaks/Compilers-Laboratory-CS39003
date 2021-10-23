@@ -82,9 +82,9 @@ public:
     string arg2;
     string result;
 
-    quad(string res, string arg1_, string operation = "EQUAL", string arg2_ = "");
-    quad(string res, int arg1_, string operation = "EQUAL", string arg2_ = "");
-    quad(string res, float arg1_, string operation = "EQUAL", string arg2_ = "");
+    quad(string res, string arg1_, string operation = "=", string arg2_ = "");
+    quad(string res, int arg1_, string operation = "=", string arg2_ = "");
+    quad(string res, float arg1_, string operation = "=", string arg2_ = "");
 
     void print();
 };

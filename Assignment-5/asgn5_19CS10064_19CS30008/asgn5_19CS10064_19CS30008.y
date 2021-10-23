@@ -5,7 +5,7 @@
     using namespace std;
 
     extern int yylex();
-    void yyerror(char *s);
+    void yyerror(string s);
     extern char* yytext;
     extern int yylineno;
     extern string varType;
@@ -171,8 +171,7 @@ primary_expression:
 constant: 
         INTEGER_CONSTANT
         {
-            string str = convertIntToString($1);
-            $$ = symbolTable::gentemp(new symbolType("int"), str);
+            $$ = symbolTable::gentemp(new symbolType("int"), convertIntToString($1));
             emit("=", $$->name, $1);
         }
         | FLOATING_CONSTANT
@@ -800,9 +799,7 @@ init_declarator:
             if($3->val != "") {
                 $1->val = $3->val;
             }
-            else {
-                emit("=", $1->name, $3->name);
-            }
+            emit("=", $1->name, $3->name);
         }
         ;
 
@@ -954,7 +951,7 @@ direct_declarator:
                 $$ = $1->update(tp);
             }
             else {
-                int temp = $3->loc->val.c_str();
+                int temp = atoi($3->loc->val.c_str());
                 prev->arrType = new symbolType("arr", t, temp);
                 $$ = $1->update($1->type);
             }
@@ -1375,7 +1372,7 @@ external_declaration:
         ;
 
 function_definition: 
-        declaration_specifiers declarator declaration_list_opt compound_statement
+        declaration_specifiers declarator declaration_list_opt change_table CURLY_BRACE_OPEN block_item_list_opt CURLY_BRACE_CLOSE
         {   
             STCount = 0;
             currentST->parent = globalST;
@@ -1399,8 +1396,8 @@ declaration_list:
 
 %%
 
-void yyerror(char *s) {
-    printf("Error occurred: %s\n", s);
-    printf("Line no.: %d\n", yylineno);
-    printf("Unable to parse: %s\n", yytext);    
+void yyerror(string s) {
+    cout << "Error occurred: " << s << endl;
+    cout << "Line no.: " << yylineno < endl;
+    cout << "Unable to parse: " << yytext << endl; 
 }
