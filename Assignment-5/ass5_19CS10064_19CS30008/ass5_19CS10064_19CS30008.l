@@ -1,8 +1,16 @@
 /* C Declarations and Definitions */
 %{  
+    /**
+    * Vanshita Garg | 19CS10064
+    * Ashutosh Kumar Singh | 19CS30008
+    * Compilers Laboratory
+    * Assignment 5
+    *
+    * Lexer for tinyC using Flex
+    */
     #include <stdio.h>
-    #include "asgn5_19CS10064_19CS30008_translator.h"
-    #include "y.tab.h"
+    #include "ass5_19CS10064_19CS30008_translator.h"
+    #include "ass5_19CS10064_19CS30008.tab.h"
 %}
 
 %option yylineno
@@ -136,7 +144,7 @@ WS                              [ \t\n]
 ","                             { return COMMA; }
 "#"                             { return HASH; }
 
-{IDENTIFIER}                    { yylval.symp = table->lookup(yytext); return IDENTIFIER; }
+{IDENTIFIER}                    { yylval.symp = currentST->lookup(yytext); return IDENTIFIER; }
 {INTEGER_CONSTANT}              { yylval.intval = atoi(yytext); return INTEGER_CONSTANT; }
 {FLOATING_CONSTANT}             { yylval.charval = yytext; return FLOATING_CONSTANT; }
 {CHAR_CONSTANT}                 { yylval.charval = yytext; return CHAR_CONSTANT; }
