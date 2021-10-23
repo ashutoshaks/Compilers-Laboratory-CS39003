@@ -5,7 +5,7 @@ int fibn (int n) {
     if (n == 1 || n == 2)
         return 1;
  
-    // Recursion function
+    // Recursive function
     else
         return (fibn(n - 1) + fibn(n - 2));
 }

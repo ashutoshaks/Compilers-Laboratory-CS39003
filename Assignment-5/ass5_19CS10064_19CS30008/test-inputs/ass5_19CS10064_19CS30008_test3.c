@@ -1,4 +1,4 @@
-//  arrays (multidimensional), loops and nested loops
+// Arrays (multidimensional), loops and nested loops
 
 int N = 4;
 

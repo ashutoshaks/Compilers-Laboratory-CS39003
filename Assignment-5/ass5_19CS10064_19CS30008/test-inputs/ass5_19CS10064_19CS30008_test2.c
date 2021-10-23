@@ -1,4 +1,4 @@
-// function calling and conditional statements (ternery and if-else)
+// Function calls and conditional statements (ternary and if-else)
 
 int max (int x, int y) {
     int ans;

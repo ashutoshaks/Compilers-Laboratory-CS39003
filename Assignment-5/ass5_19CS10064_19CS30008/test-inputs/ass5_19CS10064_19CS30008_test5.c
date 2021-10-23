@@ -1,4 +1,4 @@
-// nested if else and recursive functions  
+// Nested if else and recursive functions  
 
 int fact (int n) {                               // recursive functions
     if (n == 0) 

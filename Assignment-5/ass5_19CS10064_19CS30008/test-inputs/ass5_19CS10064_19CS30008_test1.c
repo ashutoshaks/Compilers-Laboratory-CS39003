@@ -1,6 +1,6 @@
-// declarations (variables(int, float, char), 1D array, 2D array, functions) and arithmetic operations
+// Declarations (variables(int, float, char), 1D array, 2D array, functions) and arithmetic operations
 
-// global declarations
+// Global declarations
 float d = 2.3;
 char c;	
 int i, j, k, l, m, n, o;

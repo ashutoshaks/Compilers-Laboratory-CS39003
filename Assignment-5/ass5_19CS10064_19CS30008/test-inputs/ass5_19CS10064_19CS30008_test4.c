@@ -1,4 +1,4 @@
-// typecasting and pointers
+// Typecasting and pointers
 void swap (int *xp, int *yp) {                      // pointers
     int temp = *xp;
     *xp = *yp;
