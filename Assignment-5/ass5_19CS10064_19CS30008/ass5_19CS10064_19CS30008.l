@@ -1,8 +1,8 @@
 /* C Declarations and Definitions */
 %{  
     #include <stdio.h>
-    #include "asgn5_19CS10064_19CS30008_translator.h"
-    #include "asgn5_19CS10064_19CS30008.tab.h"
+    #include "ass5_19CS10064_19CS30008_translator.h"
+    #include "ass5_19CS10064_19CS30008.tab.h"
 %}
 
 %option yylineno

@@ -7,7 +7,11 @@ int i, j, k, l, m, n, o;
 int w[10];                      // 1D array declaration
 float f[20][50];                // 2D array declaration
 int a = 4, *p, b;               // pointer declaration
-void func (int, float);         // function declaration
+
+void func (int i, float d) {
+    d = (float)(i ^ 7);
+    return;
+}
 
 int main () {
     // Variable Declaration
@@ -24,13 +28,8 @@ int main () {
     n = x & y;
     o = x | y;
     
-    y = i<<2;
-    x = i>>1;
+    y = i << 2;
+    x = i >> 1;
 
     return 0;
-}
-
-void func (int i, float d) {
-    d = (float)(i ^ 7);
-    return;
 }

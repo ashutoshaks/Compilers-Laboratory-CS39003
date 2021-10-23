@@ -12,11 +12,11 @@ int fibn (int n) {
  
 int main () {
     int n = 5;
- 	int i;
- 	int fib[n];
+    int i;
+    int fib[n];
     // for loop to print the fibonacci series.
     for (i = 0; i < n; i++) {
-    	fib[i] = fibn(i+1);
+        fib[i] = fibn(i+1);
     }
     return 0;
 }

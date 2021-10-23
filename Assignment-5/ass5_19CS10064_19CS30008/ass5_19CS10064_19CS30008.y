@@ -1,7 +1,7 @@
 %{
     #include <iostream>
     #include <sstream>
-    #include "asgn5_19CS10064_19CS30008_translator.h"
+    #include "ass5_19CS10064_19CS30008_translator.h"
     using namespace std;
 
     extern int yylex();

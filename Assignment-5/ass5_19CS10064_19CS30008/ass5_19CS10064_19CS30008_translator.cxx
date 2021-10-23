@@ -1,4 +1,4 @@
-#include "asgn5_19CS10064_19CS30008_translator.h"
+#include "ass5_19CS10064_19CS30008_translator.h"
 #include <iomanip>
 using namespace std;
 
@@ -81,11 +81,11 @@ void symbolTable::print() {
     cout << endl;
 
     // Table Headers
-    cout << setfill(' ') << left << setw(20) <<  "Name";
+    cout << setfill(' ') << left << setw(25) <<  "Name";
     cout << left << setw(25) << "Type";
-    cout << left << setw(17) << "Initial Value";
-    cout << left << setw(12) << "Size";
-    cout << left << setw(11) << "Offset";
+    cout << left << setw(20) << "Initial Value";
+    cout << left << setw(15) << "Size";
+    cout << left << setw(15) << "Offset";
     cout << left << "Nested" << endl;
 
     for(int i = 0; i < 120; i++) {
@@ -95,11 +95,11 @@ void symbolTable::print() {
 
     list<symbolTable*> tableList;
     for(list<symbol>::iterator it = this->table.begin(); it != this->table.end(); it++) {
-        cout << left << setw(20) << it->name;
+        cout << left << setw(25) << it->name;
         cout << left << setw(25) << checkType(it->type);
-        cout << left << setw(17) << it->value;
-        cout << left << setw(12) << it->size;
-        cout << left << setw(11) << it->offset;
+        cout << left << setw(20) << (it->value != "" ? it->value : "-");
+        cout << left << setw(15) << it->size;
+        cout << left << setw(15) << it->offset;
         cout << left;
 
         if(it->nestedTable != NULL) {
@@ -200,7 +200,7 @@ void quadArray::print() {
     }
     cout << endl;
 
-    int cnt = 100;
+    int cnt = 0;
     for(vector<quad>::iterator it = this->quads.begin(); it != this->quads.end(); it++, cnt++) {
         if(it->op != "label") {
             cout << left << setw(4) << cnt << ":    ";
@@ -403,6 +403,8 @@ int main() {
     globalST->update();
 
     quadList.print();
+
+    cout << endl;
 
     globalST->print();
 
