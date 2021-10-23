@@ -753,32 +753,28 @@ constant_expression:
         ;
 
 declaration: 
-        declaration_specifiers init_declarator_list_opt SEMICOLON
+        declaration_specifiers init_declarator_list SEMICOLON
         { /* Ignored */ }
-        ;
-
-init_declarator_list_opt: 
-        init_declarator_list
-        { /* Ignored */ }
-        | %empty
+        | declaration_specifiers SEMICOLON
         { /* Ignored */ }
         ;
 
 declaration_specifiers: 
-        storage_class_specifier declaration_specifiers_opt
+        storage_class_specifier declaration_specifiers
         { /* Ignored */ }
-        | type_specifier declaration_specifiers_opt
+        |storage_class_specifier
         { /* Ignored */ }
-        | type_qualifier declaration_specifiers_opt
+        | type_specifier declaration_specifiers
         { /* Ignored */ }
-        | function_specifier declaration_specifiers_opt
+        | type_specifier
         { /* Ignored */ }
-        ;
-
-declaration_specifiers_opt: 
-        declaration_specifiers
+        | type_qualifier declaration_specifiers
         { /* Ignored */ }
-        | %empty
+        | type_qualifier
+        { /* Ignored */ }
+        | function_specifier declaration_specifiers
+        { /* Ignored */ }
+        | function_specifier
         { /* Ignored */ }
         ;
 

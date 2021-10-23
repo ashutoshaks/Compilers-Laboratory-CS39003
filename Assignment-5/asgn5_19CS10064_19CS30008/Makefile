@@ -17,10 +17,10 @@ lex.yy.c: $(BASE).l $(BASE).tab.h $(BASE)_translator.h
 	flex $(BASE).l
 
 $(BASE).tab.c: $(BASE).y
-	bison -dtv $(BASE).y -Wconflicts-sr
+	bison -dtv $(BASE).y
 
 $(BASE).tab.h: $(BASE).y
-	bison -dtv $(BASE).y -Wconflicts-sr
+	bison -dtv $(BASE).y
 
 $(BASE).c:
 	touch $(BASE).c
