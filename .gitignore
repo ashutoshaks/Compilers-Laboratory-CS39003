@@ -1,7 +1,7 @@
 **/.vscode/*
 *.o
 *.a
-*.out
+a.out
 *.zip
 lex.yy.c
 *.tab.c
