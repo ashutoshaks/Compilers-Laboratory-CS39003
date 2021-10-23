@@ -41,7 +41,7 @@
 %start translation_unit
 
 // to remove dangling else problem
-%right "then" ELSE
+%right THEN ELSE
 
 %type <unaryOp> unary_operator
 
@@ -78,7 +78,7 @@
 
 %type <symType> pointer
 
-%type <symp> initializer
+%type <symp> constant initializer
 %type <symp> direct_declarator init_declarator declarator
 
 %type <arr> postfix_expression unary_expression cast_expression
@@ -88,13 +88,13 @@
 
 %%
 
-M: %empty
+M: 
         {
             $$ = nextinstr();
         }
         ;
 
-N: %empty
+N: 
         {
             $$ = new statement();
             $$->nextlist = makelist(nextinstr());
@@ -102,40 +102,40 @@ N: %empty
         }
         ;
 
-X: %empty
+X: 
         {
             string newST = currentST->name + "." + blockName + "$" + to_string(STCount++);
             symbol* sym = currentST->lookup(newST);
-            sym->nested = new symbolTable(newST);
+            sym->nestedTable = new symbolTable(newST);
             sym->name = newST;
-            sym->nested->parent = currentST;
+            sym->nestedTable->parent = currentST;
             sym->type = new symbolType("block");
             currentSymbol = sym;
         }
         ;
 
-F: %empty
+F: 
         {
             blockName = "FOR";
         }
         ;
 
-W: %empty
+W: 
         {
             blockName = "WHILE";
         }
         ;
 
-D: %empty
+D: 
         {
             blockName = "DO_WHILE";
         }
         ;
 
-change_table: %empty
+change_table: 
         {
-            if(currentSymbol->nested != NULL) {
-                switchTable(currentSymbol->nested);
+            if(currentSymbol->nestedTable != NULL) {
+                switchTable(currentSymbol->nestedTable);
                 emit("label", currentST->name);
             }
             else {
@@ -192,7 +192,7 @@ postfix_expression:
             $$ = new Array();
             $$->Array = $1->loc;
             $$->type = $1->loc->type;
-            $$->loc = $$->Array
+            $$->loc = $$->Array;
         }
         | postfix_expression SQUARE_BRACE_OPEN expression SQUARE_BRACE_CLOSE
         {
@@ -205,7 +205,7 @@ postfix_expression:
             if($1->atype == "arr") {
                 symbol* sym = symbolTable::gentemp(new symbolType("int"));
                 int sz = sizeOfType($$->type);
-                emit("*", sym->name, $3->loc, convertIntToString(sz));
+                emit("*", sym->name, $3->loc->name, convertIntToString(sz));
                 emit("+", $$->loc->name, $1->loc->name, sym->name);
             }
             else {
@@ -248,7 +248,7 @@ argument_expression_list_opt:
         {
             $$ = $1;
         }
-        | %empty
+        | 
         {
             $$ = 0;
         }
@@ -679,7 +679,7 @@ conditional_expression:
             list<int> l1 = makelist(nextinstr());
             emit("goto", "");
             backpatch($6->nextlist, nextinstr());
-            emit("=", $$->loc->name, $5->loc->name)
+            emit("=", $$->loc->name, $5->loc->name);
             list<int> l2 = makelist(nextinstr());
             l1 = merge(l1, l2);
             emit("goto", "");
@@ -703,11 +703,11 @@ assignment_expression:
                 emit("[]=", $1->Array->name, $1->loc->name, $3->loc->name);
             }
             else if($1->atype == "ptr") {
-                emit("*=", $1->Array->name, $3->loc->name)
+                emit("*=", $1->Array->name, $3->loc->name);
             }
             else {
                 $3->loc = convertType($3->loc, $1->Array->type->type);
-                emit("=", $1->Array->name, $3->loc->name)
+                emit("=", $1->Array->name, $3->loc->name);
             }
             $$ = $3;
         }
@@ -760,7 +760,7 @@ declaration:
 init_declarator_list_opt: 
         init_declarator_list
         { /* Ignored */ }
-        | %empty
+        | 
         { /* Ignored */ }
         ;
 
@@ -778,7 +778,7 @@ declaration_specifiers:
 declaration_specifiers_opt: 
         declaration_specifiers
         { /* Ignored */ }
-        | %empty
+        | 
         { /* Ignored */ }
         ;
 
@@ -796,8 +796,8 @@ init_declarator:
         }
         | declarator ASSIGN initializer
         {
-            if($3->val != "") {
-                $1->val = $3->val;
+            if($3->value != "") {
+                $1->value = $3->value;
             }
             emit("=", $1->name, $3->name);
         }
@@ -861,7 +861,7 @@ specifier_qualifier_list:
 specifier_qualifier_list_opt: 
         specifier_qualifier_list
         { /* Ignored */ }
-        | %empty
+        | 
         { /* Ignored */ }
         ;
 
@@ -877,7 +877,7 @@ enum_specifier:
 identifier_opt: 
         IDENTIFIER
         {/* Ignored */}
-        | %empty
+        | 
         {/* Ignored */}
         ;
 
@@ -910,7 +910,7 @@ function_specifier:
         ;
 
 declarator: 
-        pointer_opt direct_declarator
+        pointer direct_declarator
         {
             symbolType* t = $1;
             while(t->arrType != NULL) {
@@ -941,17 +941,17 @@ direct_declarator:
         {
             symbolType* t = $1->type;
             symbolType* prev = NULL;
-            while(t->type = "arr") {
+            while(t->type == "arr") {
                 prev = t;
                 t = t->arrType;
             }
             if(prev == NULL) {
-                int temp = atoi($3->loc->val.c_str());
+                int temp = atoi($3->loc->value.c_str());
                 symbolType* tp = new symbolType("arr", $1->type, temp);
                 $$ = $1->update(tp);
             }
             else {
-                int temp = atoi($3->loc->val.c_str());
+                int temp = atoi($3->loc->value.c_str());
                 prev->arrType = new symbolType("arr", t, temp);
                 $$ = $1->update($1->type);
             }
@@ -960,7 +960,7 @@ direct_declarator:
         {
             symbolType* t = $1->type;
             symbolType* prev = NULL;
-            while(t->type = "arr") {
+            while(t->type == "arr") {
                 prev = t;
                 t = t->arrType;
             }
@@ -986,7 +986,7 @@ direct_declarator:
                 symbol* s = currentST->lookup("return");
                 s->update($1->type);
             }
-            $1->nested = currentST;
+            $1->nestedTable = currentST;
             currentST->parent = globalST;
             switchTable(globalST);
             currentSymbol = $$;
@@ -1000,7 +1000,7 @@ direct_declarator:
                 symbol* s = currentST->lookup("return");
                 s->update($1->type);
             }
-            $1->nested = currentST;
+            $1->nestedTable = currentST;
             currentST->parent = globalST;
             switchTable(globalST);
             currentSymbol = $$;
@@ -1010,7 +1010,7 @@ direct_declarator:
 type_qualifier_list_opt: 
         type_qualifier_list
         { /* Ignored */ }
-        | %empty
+        | 
         { /* Ignored */ }
         ;
 
@@ -1086,7 +1086,7 @@ initializer_list:
 designation_opt: 
         designation
         { /* Ignored */ }
-        | %empty
+        | 
         { /* Ignored */ }
         ;
 
@@ -1179,7 +1179,7 @@ block_item_list_opt:
         {
             $$ = $1;
         }
-        | %empty
+        | 
         {
             $$ = new statement();
         }
@@ -1220,7 +1220,7 @@ expression_statement:
         ;
 
 selection_statement: 
-        IF PARENTHESIS_OPEN expression N PARENTHESIS_CLOSE M statement N %prec "then"
+        IF PARENTHESIS_OPEN expression N PARENTHESIS_CLOSE M statement N %prec THEN
         {
             backpatch($4->nextlist, nextinstr());
             convertIntToBool($3);
@@ -1270,7 +1270,7 @@ iteration_statement:
         {
             $$ = new statement();
             convertIntToBool($8);
-            backpatch($8->truelist, $3)
+            backpatch($8->truelist, $3);
             backpatch($4->nextlist, $5);
             $$->nextlist = $8->falselist;
             blockName = "";
@@ -1279,7 +1279,7 @@ iteration_statement:
         {
             $$ = new statement();
             convertIntToBool($10);
-            backpatch($10->truelist, $4)
+            backpatch($10->truelist, $4);
             backpatch($5->nextlist, $7);
             $$->nextlist = $10->falselist;
             blockName = "";
@@ -1383,7 +1383,7 @@ function_definition:
 declaration_list_opt: 
         declaration_list
         { /* Ignored */ }
-        | %empty
+        | 
         { /* Ignored */ }
         ;
 
@@ -1398,6 +1398,6 @@ declaration_list:
 
 void yyerror(string s) {
     cout << "Error occurred: " << s << endl;
-    cout << "Line no.: " << yylineno < endl;
+    cout << "Line no.: " << yylineno << endl;
     cout << "Unable to parse: " << yytext << endl; 
 }

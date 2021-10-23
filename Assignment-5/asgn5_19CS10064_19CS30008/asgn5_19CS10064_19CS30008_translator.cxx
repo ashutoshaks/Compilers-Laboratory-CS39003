@@ -9,10 +9,10 @@ quadArray quadList;
 int STCount;
 string blockName;
 
-string var_type;
+string varType;
 
 
-symbolType::symbolType(string type_, symbolType* arrType_ = NULL, int width_ = 1):
+symbolType::symbolType(string type_, symbolType* arrType_, int width_):
     type(type_), width(width_), arrType(arrType_) {}
 
 
@@ -148,13 +148,13 @@ void symbolTable::update() {
 }
 
 
-quad::quad(string res, string arg1_, string operation = "EQUAL", string arg2_ = ""): result(res), arg1(arg1_), op(operation), arg2(arg2_) {}
+quad::quad(string res, string arg1_, string operation, string arg2_): result(res), arg1(arg1_), op(operation), arg2(arg2_) {}
 
-quad::quad(string res, int arg1_, string operation = "EQUAL", string arg2_ = ""): result(res), op(operation), arg2(arg2_) {
+quad::quad(string res, int arg1_, string operation, string arg2_): result(res), op(operation), arg2(arg2_) {
     arg1 = convertIntToString(arg1_);
 }
 
-quad::quad(string res, float arg1_, string operation = "EQUAL", string arg2_ = ""): result(res), op(operation), arg2(arg2_) {
+quad::quad(string res, float arg1_, string operation, string arg2_): result(res), op(operation), arg2(arg2_) {
     arg1 = convertFloatToString(arg1_);
 }
 
@@ -175,7 +175,7 @@ void quad::print() {
     else if(op == "label")
         cout << result << ": ";
 
-    else if(op == "+" || op == "-" || op == "*" || op == "/" || op == "%" || op == "^" || op == "|" || op == "&&" || op == "<<" || op == ">>")
+    else if(op == "+" || op == "-" || op == "*" || op == "/" || op == "%" || op == "^" || op == "|" || op == "&" || op == "<<" || op == ">>")
         cout << result << " = " << arg1 << " " << op << " " << arg2;
 
     else if(op == "==" || op == "!=" || op == "<" || op == ">" || op == "<=" || op == ">=")
@@ -203,28 +203,28 @@ void quadArray::print() {
     int cnt = 100;
     for(vector<quad>::iterator it = this->quads.begin(); it != this->quads.end(); it++, cnt++) {
         if(it->op != "label") {
-            cout << setw(4) << cnt << ":    ";
+            cout << left << setw(4) << cnt << ":    ";
             it->print();
         }
         else {
-            cout << endl << cnt << ": ";
+            cout << endl << left << setw(4) << cnt << ": ";
             it->print();
         }
         cout << endl;
     }
 }
 
-void emit(string op, string result, string arg1 = "", string arg2 = "") {
+void emit(string op, string result, string arg1, string arg2) {
     quad* q = new quad(result, arg1, op, arg2);
     quadList.quads.push_back(*q);
 }
 
-void emit(string op, string result, int arg1, string arg2 = "") {
+void emit(string op, string result, int arg1, string arg2) {
     quad* q = new quad(result, arg1, op, arg2);
     quadList.quads.push_back(*q);
 }
 
-void emit(string op, string result, float arg1, string arg2 = "") {
+void emit(string op, string result, float arg1, string arg2) {
     quad* q = new quad(result, arg1, op, arg2);
     quadList.quads.push_back(*q);
 }
