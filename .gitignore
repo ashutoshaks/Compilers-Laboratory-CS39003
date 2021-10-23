@@ -4,8 +4,10 @@
 *.out
 *.zip
 lex.yy.c
-y.tab.c
-y.tab.h
+*.tab.c
+*.tab.h
+*.gch
+*.output
 output.txt
 Slides/
 Assignment-3/ass3_19CS10064_19CS30008/output.txt
