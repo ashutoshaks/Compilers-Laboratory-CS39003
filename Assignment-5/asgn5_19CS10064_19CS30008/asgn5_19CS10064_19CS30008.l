@@ -2,7 +2,7 @@
 %{  
     #include <stdio.h>
     #include "asgn5_19CS10064_19CS30008_translator.h"
-    #include "y.tab.h"
+    #include "asgn5_19CS10064_19CS30008.tab.h"
 %}
 
 %option yylineno

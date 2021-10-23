@@ -88,13 +88,13 @@
 
 %%
 
-M: 
+M: %empty
         {
             $$ = nextinstr();
         }
         ;
 
-N: 
+N: %empty
         {
             $$ = new statement();
             $$->nextlist = makelist(nextinstr());
@@ -102,7 +102,7 @@ N:
         }
         ;
 
-X: 
+X: %empty
         {
             string newST = currentST->name + "." + blockName + "$" + to_string(STCount++);
             symbol* sym = currentST->lookup(newST);
@@ -114,25 +114,25 @@ X:
         }
         ;
 
-F: 
+F: %empty
         {
             blockName = "FOR";
         }
         ;
 
-W: 
+W: %empty
         {
             blockName = "WHILE";
         }
         ;
 
-D: 
+D: %empty
         {
             blockName = "DO_WHILE";
         }
         ;
 
-change_table: 
+change_table: %empty
         {
             if(currentSymbol->nestedTable != NULL) {
                 switchTable(currentSymbol->nestedTable);
@@ -248,7 +248,7 @@ argument_expression_list_opt:
         {
             $$ = $1;
         }
-        | 
+        | %empty
         {
             $$ = 0;
         }
@@ -760,7 +760,7 @@ declaration:
 init_declarator_list_opt: 
         init_declarator_list
         { /* Ignored */ }
-        | 
+        | %empty
         { /* Ignored */ }
         ;
 
@@ -778,7 +778,7 @@ declaration_specifiers:
 declaration_specifiers_opt: 
         declaration_specifiers
         { /* Ignored */ }
-        | 
+        | %empty
         { /* Ignored */ }
         ;
 
@@ -861,7 +861,7 @@ specifier_qualifier_list:
 specifier_qualifier_list_opt: 
         specifier_qualifier_list
         { /* Ignored */ }
-        | 
+        | %empty
         { /* Ignored */ }
         ;
 
@@ -877,7 +877,7 @@ enum_specifier:
 identifier_opt: 
         IDENTIFIER
         {/* Ignored */}
-        | 
+        | %empty
         {/* Ignored */}
         ;
 
@@ -973,11 +973,15 @@ direct_declarator:
                 $$ = $1->update($1->type);
             }
         }
-        | direct_declarator SQUARE_BRACE_OPEN STATIC type_qualifier_list_opt assignment_expression SQUARE_BRACE_CLOSE
+        | direct_declarator SQUARE_BRACE_OPEN STATIC type_qualifier_list assignment_expression SQUARE_BRACE_CLOSE
+        { /* Ignored */ }
+        | direct_declarator SQUARE_BRACE_OPEN STATIC assignment_expression SQUARE_BRACE_CLOSE
         { /* Ignored */ }
         | direct_declarator SQUARE_BRACE_OPEN type_qualifier_list STATIC assignment_expression SQUARE_BRACE_CLOSE
         { /* Ignored */ }
-        | direct_declarator SQUARE_BRACE_OPEN type_qualifier_list_opt MULTIPLY SQUARE_BRACE_CLOSE
+        | direct_declarator SQUARE_BRACE_OPEN type_qualifier_list MULTIPLY SQUARE_BRACE_CLOSE
+        { /* Ignored */ }
+        | direct_declarator SQUARE_BRACE_OPEN MULTIPLY SQUARE_BRACE_CLOSE
         { /* Ignored */ }
         | direct_declarator PARENTHESIS_OPEN change_table parameter_type_list PARENTHESIS_CLOSE
         {
@@ -1010,7 +1014,7 @@ direct_declarator:
 type_qualifier_list_opt: 
         type_qualifier_list
         { /* Ignored */ }
-        | 
+        | %empty
         { /* Ignored */ }
         ;
 
@@ -1086,7 +1090,7 @@ initializer_list:
 designation_opt: 
         designation
         { /* Ignored */ }
-        | 
+        | %empty
         { /* Ignored */ }
         ;
 
@@ -1179,7 +1183,7 @@ block_item_list_opt:
         {
             $$ = $1;
         }
-        | 
+        | %empty
         {
             $$ = new statement();
         }
@@ -1374,8 +1378,8 @@ external_declaration:
 function_definition: 
         declaration_specifiers declarator declaration_list_opt change_table CURLY_BRACE_OPEN block_item_list_opt CURLY_BRACE_CLOSE
         {   
-            STCount = 0;
             currentST->parent = globalST;
+            STCount = 0;
             switchTable(globalST);
         }
         ;
@@ -1383,7 +1387,7 @@ function_definition:
 declaration_list_opt: 
         declaration_list
         { /* Ignored */ }
-        | 
+        | %empty
         { /* Ignored */ }
         ;
 
