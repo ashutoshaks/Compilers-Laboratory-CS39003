@@ -15,8 +15,8 @@
     extern int yylex();         // From lexer
     void yyerror(string s);     // Function to report errors
     extern char* yytext;        // From lexer, gives the text being currently scanned
-    extern int yylineno;        // Used for keeping track of line number
-    extern string varType;      // Used for storing last encountered type
+    extern int yylineno;        // Used for keeping track of the line number
+    extern string varType;      // Used for storing the last encountered type
 %}
 
 %union {
@@ -31,27 +31,36 @@
     symbolType* symType;    // For the type of a symbol
     Array* arr;             // For arrays
 }
+
 /*
     All tokens
 */
 %token AUTO BREAK CASE CHAR CONST CONTINUE DEFAULT DO DOUBLE ELSE ENUM EXTERN FLOAT FOR GOTO IF INLINE INT LONG REGISTER RESTRICT RETURN SHORT SIGNED SIZEOF STATIC STRUCT SWITCH TYPEDEF UNION UNSIGNED VOID VOLATILE WHILE BOOL COMPLEX IMAGINARY
-
 %token SQUARE_BRACE_OPEN SQUARE_BRACE_CLOSE PARENTHESIS_OPEN PARENTHESIS_CLOSE CURLY_BRACE_OPEN CURLY_BRACE_CLOSE 
 %token DOT ARROW INCREMENT DECREMENT BITWISE_AND MULTIPLY ADD SUBTRACT BITWISE_NOR NOT DIVIDE MODULO 
 %token LSHIFT RSHIFT LESS_THAN GREATER_THAN LESS_THAN_EQUAL GREATER_THAN_EQUAL EQUAL NOT_EQUAL BITWISE_XOR BITWISE_OR 
 %token LOGICAL_AND LOGICAL_OR QUESTION_MARK COLON SEMICOLON ELLIPSIS 
 %token ASSIGN MULTIPLY_ASSIGN DIVIDE_ASSIGN MODULO_ASSIGN ADD_ASSIGN SUBTRACT_ASSIGN LSHIFT_ASSIGN RSHIFT_ASSIGN AND_ASSIGN XOR_ASSIGN OR_ASSIGN COMMA HASH
 
-%token <symp> IDENTIFIER                // Idnetifiers are treated with type symbol*
-%token <intval> INTEGER_CONSTANT        // Integer constants have a type intval
-%token <charval> FLOATING_CONSTANT      // Floating constants have a type charval
-%token <charval> CHAR_CONSTANT          // Character constants have a type charval
-%token <charval> STRING_LITERAL         // String literals have a type charval
+// Identifiers are treated with type symbol*
+%token <symp> IDENTIFIER
+
+// Integer constants have a type intval
+%token <intval> INTEGER_CONSTANT
+
+// Floating constants have a type charval
+%token <charval> FLOATING_CONSTANT
+
+// Character constants have a type charval
+%token <charval> CHAR_CONSTANT
+
+// String literals have a type charval
+%token <charval> STRING_LITERAL
 
 // The start symbol is translation_unit
 %start translation_unit
 
-// Helps in removing dangling else problem
+// Helps in removing the dangling else problem
 %right THEN ELSE
 
 // Non-terminals of type unaryOp (unary operator)
@@ -82,7 +91,7 @@
 %type <stmt>
         statement
         compound_statement
-        loop_statement          // New non-terminal that has been added to facilitate the structure of loops
+        loop_statement
         selection_statement
         iteration_statement
         labeled_statement 
@@ -101,56 +110,13 @@
 // Non-terminals of type arr
 %type <arr> postfix_expression unary_expression cast_expression
 
-// Auxilliary non-terminal M of type instr to help in backpatching
+// Auxiliary non-terminal M of type instr to help in backpatching
 %type <instr> M
 
-// Auxilliary non-terminal N of type stmt to help in control flow statements
+// Auxiliary non-terminal N of type stmt to help in control flow statements
 %type <stmt> N
 
 %%
-
-M: %empty
-        {   
-            // Stores the next instruction value, and helps in backpatching
-            $$ = nextinstr();
-        }
-        ;
-
-N: %empty
-        {
-            $$ = new statement();
-            $$->nextlist = makelist(nextinstr());
-            emit("goto", "");
-        }
-        ;
-
-X: %empty
-        {   
-            // Used for creating new nested symbol tables for nested blocks
-            string newST = currentST->name + "." + blockName + "$" + to_string(STCount++);  // Generate name for new symbol table
-            symbol* sym = currentST->lookup(newST);
-            sym->nestedTable = new symbolTable(newST);  // Create new symbol table
-            sym->name = newST;
-            sym->nestedTable->parent = currentST;
-            sym->type = new symbolType("block");    // The type will be "block"
-            currentSymbol = sym;    // Change the current symbol pointer
-        }
-        ;
-
-change_table: %empty
-        {   
-            // Used for changing the symbol table on encountering functions
-            if(currentSymbol->nestedTable != NULL) {
-                // If the symbol table already exists, switch to that table
-                switchTable(currentSymbol->nestedTable);
-                emit("label", currentST->name);
-            }
-            else {
-                // If the symbol table does not exist already, create it and switch to it
-                switchTable(new symbolTable(""));
-            }
-        }
-        ;
 
 primary_expression: 
         IDENTIFIER
@@ -711,6 +677,22 @@ conditional_expression:
             backpatch($1->truelist, $4);                        // When $1 is true, control goes to $4 (expression)
             backpatch($1->falselist, $8);                       // When $1 is false, control goes to $8 (conditional_expression)
             backpatch(l1, nextinstr());
+        }
+        ;
+
+M: %empty
+        {   
+            // Stores the next instruction value, and helps in backpatching
+            $$ = nextinstr();
+        }
+        ;
+
+N: %empty
+        {
+            // Helps in control flow
+            $$ = new statement();
+            $$->nextlist = makelist(nextinstr());
+            emit("goto", "");
         }
         ;
 
@@ -1430,6 +1412,34 @@ D: %empty
             This non-terminal indicates the start of a do-while loop
             */
             blockName = "DO_WHILE";
+        }
+        ;
+
+X: %empty
+        {   
+            // Used for creating new nested symbol tables for nested blocks
+            string newST = currentST->name + "." + blockName + "$" + to_string(STCount++);  // Generate name for new symbol table
+            symbol* sym = currentST->lookup(newST);
+            sym->nestedTable = new symbolTable(newST);  // Create new symbol table
+            sym->name = newST;
+            sym->nestedTable->parent = currentST;
+            sym->type = new symbolType("block");    // The type will be "block"
+            currentSymbol = sym;    // Change the current symbol pointer
+        }
+        ;
+
+change_table: %empty
+        {   
+            // Used for changing the symbol table on encountering functions
+            if(currentSymbol->nestedTable != NULL) {
+                // If the symbol table already exists, switch to that table
+                switchTable(currentSymbol->nestedTable);
+                emit("label", currentST->name);
+            }
+            else {
+                // If the symbol table does not exist already, create it and switch to it
+                switchTable(new symbolTable(""));
+            }
         }
         ;
 

@@ -56,9 +56,8 @@ symbol* symbolTable::lookup(string name) {
         s = this->parent->lookup(name);
     }
 
-    // If the symbol is not found create the symbol, add it to the symbol table and return a pointer to it
     if(currentST == this && s == NULL) {
-        // If the symbol is not found create the symbol, add it to the symbol table and return a pointer to it
+        // If the symbol is not found, create the symbol, add it to the symbol table and return a pointer to it
         symbol* sym = new symbol(name);
         table.push_back(*sym);
         return &(table.back());
@@ -72,14 +71,14 @@ symbol* symbolTable::lookup(string name) {
 }
 
 symbol* symbolTable::gentemp(symbolType* t, string initValue) {
-    // create the name for the temporary
+    // Create the name for the temporary
     string name = "t" + convertIntToString(currentST->tempCount++);
     symbol* sym = new symbol(name);
     sym->type = t;
-    sym->value = initValue;         // assign the initial value, if any
+    sym->value = initValue;         // Assign the initial value, if any
     sym->size = sizeOfType(t);
 
-    // add the temporary to the symbol table
+    // Add the temporary to the symbol table
     currentST->table.push_back(*sym);
     return &(currentST->table.back());
 }
@@ -145,7 +144,7 @@ void symbolTable::update() {
     list<symbolTable*> tableList;
     int off_set;
 
-    // Update the offsets of the symbols based on their sized
+    // Update the offsets of the symbols based on their sizes
     for(list<symbol>::iterator it = table.begin(); it != table.end(); it++) {
         if(it == table.begin()) {
             it->offset = 0;
@@ -415,7 +414,6 @@ string checkType(symbolType* t) {
 }
 
 int main() {
-    
     STCount = 0;                            // Initialize STCount to 0
     globalST = new symbolTable("Global");   // Create global symbol table
     currentST = globalST;                   // Make global symbol table the currently active symbol table

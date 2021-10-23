@@ -17,7 +17,7 @@ using namespace std;
 
 /*
     Sizes for basic data types, according to x86_64 architecture.
-    To target a differnet platform, the sizes can be changed here itself.
+    To target a different platform, the sizes can be changed here itself.
 
     List of sizes
     -------------
@@ -83,7 +83,7 @@ extern int yyparse();
     ----------------
     Member Variables:
         type: string            The type of the symbol
-        width: int              In case of arrays, it represents the size, for basic types it is 
+        width: int              In case of arrays, it represents the size, for basic types it is 1
         arrType: symbolType*    For arrays, it points to the type of the elements in the array
 
     Member Methods:
@@ -116,7 +116,7 @@ public:
         - Constructor
 
         update(symbolType* t): symbol*
-        - Update the contents of an exisiting symbol
+        - Update the contents of an existing symbol
 */
 class symbol {
 public:
@@ -146,10 +146,10 @@ public:
         - Constructor
 
         lookup(string name): symbol*
-        - A method to lookup an id (given its name or lexeme) in the Symbol Table. If the id exists, the entry is returned, otherwise a new entry is created.
+        - A method to lookup an id (given its name or lexeme) in the symbol table. If the id exists, the entry is returned, otherwise a new entry is created.
 
         gentemp(symbolType* t, string initValue = ""): symbol*
-        - A static method to generate a new temporary, insert it to the Symbol Table, and return a pointer to the entry
+        - A static method to generate a new temporary, insert it to the symbol table, and return a pointer to the entry
 
         print(): void
         - Prints the symbol table in a suitable fashion
@@ -291,7 +291,7 @@ void emit(string op, string result, int arg1, string arg2 = "");
 void emit(string op, string result, float arg1, string arg2 = "");
 
 /*
-    A global function to create a new list containing only i, an index into the array of quad’s, 
+    A global function to create a new list containing only i, an index into the array of quads, 
     and to return a pointer to the newly created list
 */
 list<int> makelist(int i);
@@ -302,7 +302,7 @@ list<int> makelist(int i);
 list<int> merge(list<int> &list1, list<int> &list2);
 
 /*
-    A global function to insert address as the target label for each of the quad’s on the list l
+    A global function to insert address as the target label for each of the quads on the list l
 */
 void backpatch(list<int> l, int address);
 
@@ -339,7 +339,7 @@ expression* convertIntToBool(expression* expr);
 expression* convertBoolToInt(expression* expr);
 
 /*
-    Change the currently active symbol table to newTable
+    Changes the currently active symbol table to newTable
 */
 void switchTable(symbolTable* newTable);
 
@@ -349,12 +349,12 @@ void switchTable(symbolTable* newTable);
 int nextinstr();
 
 /*
-    Auxilliary function to get the size of a type
+    Auxiliary function to get the size of a type
 */
 int sizeOfType(symbolType* t);
 
 /*
-    Auxillary function to print a type
+    Auxilary function to print a type
 */
 string checkType(symbolType* t);
 
