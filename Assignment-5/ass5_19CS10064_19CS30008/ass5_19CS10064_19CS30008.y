@@ -1,4 +1,13 @@
 %{
+    /**
+    * Vanshita Garg | 19CS10064
+    * Ashutosh Kumar Singh | 19CS30008
+    * Compilers Laboratory
+    * Assignment 5
+    *
+    * Bison specifications
+    */
+
     #include <iostream>
     #include <sstream>
     #include "ass5_19CS10064_19CS30008_translator.h"
