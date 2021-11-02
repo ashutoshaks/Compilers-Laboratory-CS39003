@@ -179,7 +179,7 @@ public:
     int pointers;
     DataType type;
     DataType nextType;
-    vector<int> l;
+    vector<int> li;
     expression* initVal;
     int pc;
 };

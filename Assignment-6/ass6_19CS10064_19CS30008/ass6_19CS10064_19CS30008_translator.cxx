@@ -227,7 +227,7 @@ string quad::print() {
     else if(op == FUNC_BEG)
         out += (result + ": ");
     else if(op == FUNC_END) {
-        // Do Nothing
+        out += ("function " + result + " ends");
     }
     else if(op == L_DEREF)
         out += ("*" + result + " = " + arg1);
