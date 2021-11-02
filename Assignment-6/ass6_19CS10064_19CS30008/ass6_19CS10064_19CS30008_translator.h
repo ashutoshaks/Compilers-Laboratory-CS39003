@@ -95,9 +95,9 @@ public:
     float f;
     void* p;
 
-    void setInitVal(int i);
-    void setInitVal(char c);
-    void setInitVal(float f);
+    void setInitVal(int val);
+    void setInitVal(char val);
+    void setInitVal(float val);
 };
 
 
@@ -206,7 +206,7 @@ list<int> makelist(int i);
 /*
     A global function to concatenate two lists list1 and list2 and to return a pointer to the concatenated list
 */
-list<int> merge(list<int> &list1, list<int> &list2);
+list<int> merge(list<int> list1, list<int> list2);
 
 /*
     A global function to insert address as the target label for each of the quads on the list l
@@ -242,7 +242,7 @@ int sizeOfType(DataType t);
 /*
     Auxilary function to print a type
 */
-string checkType(symbolType* t);
+string checkType(symbolType t);
 
 string getInitVal(symbol* sym);
 

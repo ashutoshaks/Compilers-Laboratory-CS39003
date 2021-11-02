@@ -1,35 +1,60 @@
-// Declarations (variables(int, float, char), 1D array, 2D array, functions) and arithmetic operations
 
-// Global declarations
-float d = 2.3;
-char c;	
-int i, j, k, l, m, n, o;
-int w[10];                      // 1D array declaration
-float f[20][50];                // 2D array declaration
-int a = 4, *p, b;               // pointer declaration
+// //test file to check basic statements, expression, readInt and printInt library 
 
-void func (int i, float d) {
-    d = (float)(i ^ 7);
-    return;
+// //functions created in assignment 2
+
+// //also checks the recursive fibonacci function to check the function call and return methodology
+
+
+// int printStr(char *c);
+// int printInt(int i);
+// int readInt(int *eP);
+// int e=5;								// global var testing
+// int fibonacci(int n)
+// {
+//     if(n<=2)
+//         return 1;
+//     printStr("debug1 \n");
+//     int d;
+//     printInt(n);
+//     printStr("debug2 \n");
+//     d=fibonacci(n-1);			// recursive calls
+//     int c;
+//     //printStr("5 \n");
+//     c=fibonacci(n-2);
+//     int e;
+//     e=d+c;
+//     //printStr("6 \n");
+//     return e;
+// }
+
+// int main()
+// {
+//   int a=5;
+//   int result;
+// 	result = fibonacci ( a) ; // function invocation
+// 	printStr("\nResult = \n");
+// 	printInt(result);
+//   return 0;
+// }
+
+
+int printStr(char *c);
+int printInt(int i);
+int readInt(int *eP);
+
+int solve(int a)
+{
+    if(a <= 5)
+        return 1;
+    return 0;
 }
 
-int main () {
-    // Variable Declaration
-    int x = 120;
-    int y = 17;
-    char ch = 'c', d = 'a';     // character definitions
-
-    // Arithmetic Operations
-    i = x + y;
-    j = x - y;
-    k = x * y;
-    l = x / y;
-    m = x % y;
-    n = x & y;
-    o = x | y;
-    
-    y = i << 2;
-    x = i >> 1;
+int main()
+{
+    int a = 5;
+    int ans = solve(a);
+    printInt(ans);
 
     return 0;
 }

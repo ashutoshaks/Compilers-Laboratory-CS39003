@@ -18,7 +18,7 @@ int symbolTable::tempCount = 0;
 
 quadArray quadList;
 symbolTable globalST;
-symbolTable* ST;       // initialize to &globalST in main
+symbolTable* ST = &globalST;       // initialize to &globalST in main
 
 
 void symbolValue::setInitVal(int val) {
@@ -181,7 +181,7 @@ string quad::print() {
         out += arg1;
     }
     else if(op >= GOTO_EQ && op <= IF_FALSE_GOTO) {
-        out += ("if" + arg1 + " ");
+        out += ("if " + arg1 + " ");
         switch(op) {
             case GOTO_EQ: out += "=="; break;
             case GOTO_NEQ: out += "!="; break;
@@ -192,7 +192,7 @@ string quad::print() {
             case IF_GOTO: out += "!= 0"; break;
             case IF_FALSE_GOTO: out += "== 0"; break;
         }
-        out += (" " + arg2 + "goto " + result);
+        out += (" " + arg2 + " goto " + result);
     }
     else if(op >= CtoI && op <= CtoF) {
         out += (result + " = ");
@@ -242,6 +242,7 @@ void quadArray::print() {
         cout << '-';
     cout << endl;
     cout << "THREE ADDRESS CODE (TAC):" << endl;
+    cout << (int)quads.size() << endl;
     for(int i = 0; i < 120; i++)
         cout << '-';
     cout << endl;
@@ -300,7 +301,7 @@ list<int> makelist(int i) {
 }
 
 // Implementation of the merge function
-list<int> merge(list<int> &list1, list<int> &list2) {
+list<int> merge(list<int> list1, list<int> list2) {
     list1.merge(list2);
     return list1;
 }

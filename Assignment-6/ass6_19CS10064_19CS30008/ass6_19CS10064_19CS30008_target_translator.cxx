@@ -23,11 +23,10 @@ map<int, string> labels;
 stack<pair<string, int>> parameters;
 int labelCount = 0;
 string funcRunning;
-ofstream& sfile;
 string asmFileName;
 
 
-void printGlobal() {
+void printGlobal(ofstream& sfile) {
     for(vector<symbol*>::iterator it = globalST.symbols.begin(); it != globalST.symbols.end(); it++) {
         symbol* sym = *it;
         if(sym->type.type == CHAR && sym->name[0] != 't') {
@@ -45,6 +44,7 @@ void printGlobal() {
         else if(sym->type.type == INT && sym->name[0] != 't') {
             if(sym->initVal != NULL) {
                 sfile << "\t.globl\t" << sym->name << endl;
+                sfile << "\t.data" << endl;
                 sfile << "\t.align\t4" << endl;
                 sfile << "\t.type\t" << sym->name << ", @object" << endl;
                 sfile << "\t.size\t" << sym->name << ", 4" << endl;
@@ -58,7 +58,7 @@ void printGlobal() {
 }
 
 
-void printStrings() {
+void printStrings(ofstream& sfile) {
     sfile << ".section\t.rodata" << endl;
     int i = 0;
     for(vector<string>::iterator it = stringConsts.begin(); it != stringConsts.end(); it++) {
@@ -83,7 +83,7 @@ void setLabels() {
 }
 
 
-void generatePrologue(int memBind) {
+void generatePrologue(int memBind, ofstream& sfile) {
     int width = 16;
     sfile << "\t.text" << endl;
     sfile << "\t.globl\t" << funcRunning << endl;
@@ -95,7 +95,7 @@ void generatePrologue(int memBind) {
 }
 
 
-void quadCode(quad q) {
+void quadCode(quad q, ofstream& sfile) {
     string strLabel = q.result;
     bool hasStrLabel = (q.result[0] == '.' && q.result[1] == 'L' && q.result[2] == 'C');
     string toPrint1 = "", toPrint2 = "", toPrintRes = "";
@@ -454,9 +454,9 @@ void quadCode(quad q) {
 
 
 
-void generateTargetCode() {
-    printGlobal();
-    printStrings();
+void generateTargetCode(ofstream& sfile) {
+    printGlobal(sfile);
+    printStrings(sfile);
     setLabels();
     symbolTable* currFuncTable = NULL;
     symbol* currFunc = NULL;
@@ -499,7 +499,7 @@ void generateTargetCode() {
             else
                 memBind *= -1;
             funcRunning = quadList.quads[i].result;
-            generatePrologue(memBind);
+            generatePrologue(memBind, sfile);
         }
         else if(quadList.quads[i].op == FUNC_END) {
             ST = &globalST;
@@ -510,16 +510,17 @@ void generateTargetCode() {
         }
 
         if(funcRunning != "")
-            quadCode(quadList.quads[i]);
+            quadCode(quadList.quads[i], sfile);
     }
 }
 
 
 int main(int argc, char* argv[]) {
-    ST = &globalST;
+    // ST = &globalST;
     yyparse();
 
     asmFileName = "ass6_19CS10064_19CS30008_" + string(argv[argc - 1]) + ".s";
+    ofstream sfile;
     sfile.open(asmFileName);
 
     quadList.print();
@@ -528,7 +529,7 @@ int main(int argc, char* argv[]) {
 
     ST = &globalST;
 
-    generateTargetCode();
+    generateTargetCode(sfile);
 
     sfile.close();
 

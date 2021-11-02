@@ -10,7 +10,7 @@
     */
     #include <stdio.h>
     #include "ass6_19CS10064_19CS30008_translator.h"
-    #include "ass6_19CS10064_19CS30008.tab.h"
+    #include "y.tab.h"
 %}
 
 %option yylineno
@@ -61,7 +61,7 @@ WS                              [ \t\n]
 "auto"                          { return AUTO; }
 "break"                         { return BREAK; }
 "case"                          { return CASE; }
-"char"                          { return CHAR; }
+"char"                          { return CHAR_; }
 "const"                         { return CONST; }
 "continue"                      { return CONTINUE; }
 "default"                       { return DEFAULT; }
@@ -70,16 +70,16 @@ WS                              [ \t\n]
 "else"                          { return ELSE; }
 "enum"                          { return ENUM; }             
 "extern"                        { return EXTERN; }
-"float"                         { return FLOAT; }
+"float"                         { return FLOAT_; }
 "for"                           { return FOR; }
-"goto"                          { return GOTO; }
+"goto"                          { return GOTO_; }
 "if"                            { return IF; }
 "inline"                        { return INLINE; }
-"int"                           { return INT; }
+"int"                           { return INT_; }
 "long"                          { return LONG; }
 "register"                      { return REGISTER; }
 "restrict"                      { return RESTRICT; }
-"return"                        { return RETURN; }
+"return"                        { return RETURN_; }
 "short"                         { return SHORT; }
 "signed"                        { return SIGNED; }
 "sizeof"                        { return SIZEOF; }
@@ -89,10 +89,10 @@ WS                              [ \t\n]
 "typedef"                       { return TYPEDEF; }
 "union"                         { return UNION; }
 "unsigned"                      { return UNSIGNED; }
-"void"                          { return VOID; }
+"void"                          { return VOID_; }
 "volatile"                      { return VOLATILE; }
 "while"                         { return WHILE; }
-"_Bool"                         { return BOOL; }
+"_Bool"                         { return BOOL_; }
 "_Complex"                      { return COMPLEX; }
 "_Imaginary"                    { return IMAGINARY; }
 
@@ -108,7 +108,7 @@ WS                              [ \t\n]
 "--"                            { return DECREMENT; }
 "&"                             { return BITWISE_AND; }
 "*"                             { return MULTIPLY; }
-"+"                             { return ADD; }
+"+"                             { return ADD_; }
 "-"                             { return SUBTRACT; }
 "~"                             { return BITWISE_NOR; }
 "!"                             { return NOT; }
@@ -130,7 +130,7 @@ WS                              [ \t\n]
 ":"                             { return COLON; }
 ";"                             { return SEMICOLON; }
 "..."                           { return ELLIPSIS; }
-"="                             { return ASSIGN; }
+"="                             { return ASSIGN_; }
 "*="                            { return MULTIPLY_ASSIGN; }
 "/="                            { return DIVIDE_ASSIGN; }
 "%="                            { return MODULO_ASSIGN; }

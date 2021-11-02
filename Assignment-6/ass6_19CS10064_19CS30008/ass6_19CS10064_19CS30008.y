@@ -38,7 +38,7 @@
     opcode opc;
     expression* expr;       // For an expression
     declaration* dec;
-    vector<declaration*> decList;
+    vector<declaration*> *decList;
     param* prm;
     vector<param*> *prmList;
 }
@@ -46,12 +46,12 @@
 /*
     All tokens
 */
-%token AUTO BREAK CASE CHAR CONST CONTINUE DEFAULT DO DOUBLE ELSE ENUM EXTERN FLOAT FOR GOTO IF INLINE INT LONG REGISTER RESTRICT RETURN SHORT SIGNED SIZEOF STATIC STRUCT SWITCH TYPEDEF UNION UNSIGNED VOID VOLATILE WHILE BOOL COMPLEX IMAGINARY
+%token AUTO BREAK CASE CHAR_ CONST CONTINUE DEFAULT DO DOUBLE ELSE ENUM EXTERN FLOAT_ FOR GOTO_ IF INLINE INT_ LONG REGISTER RESTRICT RETURN_ SHORT SIGNED SIZEOF STATIC STRUCT SWITCH TYPEDEF UNION UNSIGNED VOID_ VOLATILE WHILE BOOL_ COMPLEX IMAGINARY
 %token SQUARE_BRACE_OPEN SQUARE_BRACE_CLOSE PARENTHESIS_OPEN PARENTHESIS_CLOSE CURLY_BRACE_OPEN CURLY_BRACE_CLOSE 
-%token DOT ARROW INCREMENT DECREMENT BITWISE_AND MULTIPLY ADD SUBTRACT BITWISE_NOR NOT DIVIDE MODULO 
+%token DOT ARROW INCREMENT DECREMENT BITWISE_AND MULTIPLY ADD_ SUBTRACT BITWISE_NOR NOT DIVIDE MODULO 
 %token LSHIFT RSHIFT LESS_THAN GREATER_THAN LESS_THAN_EQUAL GREATER_THAN_EQUAL EQUAL NOT_EQUAL BITWISE_XOR BITWISE_OR 
 %token LOGICAL_AND LOGICAL_OR QUESTION_MARK COLON SEMICOLON ELLIPSIS 
-%token ASSIGN MULTIPLY_ASSIGN DIVIDE_ASSIGN MODULO_ASSIGN ADD_ASSIGN SUBTRACT_ASSIGN LSHIFT_ASSIGN RSHIFT_ASSIGN AND_ASSIGN XOR_ASSIGN OR_ASSIGN COMMA HASH
+%token ASSIGN_ MULTIPLY_ASSIGN DIVIDE_ASSIGN MODULO_ASSIGN ADD_ASSIGN SUBTRACT_ASSIGN LSHIFT_ASSIGN RSHIFT_ASSIGN AND_ASSIGN XOR_ASSIGN OR_ASSIGN COMMA HASH
 
 // Identifiers are treated with type symbol*
 %token <str> IDENTIFIER
@@ -175,6 +175,7 @@ primary_expression:
 
 postfix_expression: 
         primary_expression
+        {}
         | postfix_expression SQUARE_BRACE_OPEN expression SQUARE_BRACE_CLOSE
         {
             symbolType to = ST->lookup($1->loc)->type;
@@ -193,18 +194,19 @@ postfix_expression:
         | postfix_expression PARENTHESIS_OPEN PARENTHESIS_CLOSE
         {   
             // Corresponds to calling a function with the function name and the appropriate number of parameters
-            symbolTable* funcTable = ST->lookup($1->loc)->nestedTable;
+            symbolTable* funcTable = globalST.lookup($1->loc)->nestedTable;
             emit($1->loc, "0", "", CALL);
         }
         | postfix_expression PARENTHESIS_OPEN argument_expression_list PARENTHESIS_CLOSE
         {   
             // Corresponds to calling a function with the function name and the appropriate number of parameters
-            symbolTable* funcTable = ST->lookup($1->loc)->nestedTable;
+            symbolTable* funcTable = globalST.lookup($1->loc)->nestedTable;
             vector<param*> parameters = *($3);
             vector<symbol*> paramsList = funcTable->symbols;
 
-            for(int i = 0; i < (int)parameters.size(); i++)
+            for(int i = 0; i < (int)parameters.size(); i++) {
                 emit(parameters[i]->name, "", "", PARAM);
+            }
 
             DataType retType = funcTable->lookup("RETVAL")->type.type;
             if(retType == VOID)
@@ -241,12 +243,13 @@ postfix_expression:
         | postfix_expression DECREMENT
         {
             $$ = new expression();
+            $$->loc = ST->gentemp(ST->lookup($1->loc)->type.type);
             symbolType t = ST->lookup($1->loc)->type;
             if(t.type == ARRAY) {
                 $$->loc = ST->gentemp(ST->lookup($1->loc)->type.nextType);
-                emit($$->loc, $1->loc, *($1->folder), ARR_IDX_ARG);
                 string temp = ST->gentemp(t.nextType);
                 emit(temp, $1->loc, *($1->folder), ARR_IDX_ARG);
+                emit($$->loc, temp, "", ASSIGN);
                 emit(temp, temp, "1", SUB);
                 emit($1->loc, temp, *($1->folder), ARR_IDX_RES);
             }
@@ -268,7 +271,7 @@ argument_expression_list:
             param* first = new param();
             first->name = $1->loc;
             first->type = ST->lookup($1->loc)->type;
-            $$ = new vector<param*>();
+            $$ = new vector<param*>;
             $$->push_back(first);
         }
         | argument_expression_list COMMA assignment_expression
@@ -325,23 +328,26 @@ unary_expression:
         | unary_operator cast_expression
         {
             // Case of unary operator
-            $$ = new expression();
             switch($1) {
                 case '&':   // Address
+                    $$ = new expression();
                     $$->loc = ST->gentemp(POINTER);
-                    emit($$->loc, $2->loc, "", REFERENCE)            // Emit the quad
+                    emit($$->loc, $2->loc, "", REFERENCE);            // Emit the quad
                     break;
                 case '*':   // De-referencing
+                    $$ = new expression();
                     $$->loc = ST->gentemp(INT);
                     $$->fold = 1;
                     $$->folder = new string($2->loc);
-                    emit($$->loc, $2->loc, "", DEREFERENCE)            // Emit the quad
+                    emit($$->loc, $2->loc, "", DEREFERENCE);            // Emit the quad
                     break;
                 case '-':   // Unary minus
+                    $$ = new expression();
                     $$->loc = ST->gentemp();
-                    emit($$->loc, $2->loc, "", U_MINUS)            // Emit the quad
+                    emit($$->loc, $2->loc, "", U_MINUS);            // Emit the quad
                     break;
                 case '!':   // Logical not 
+                    $$ = new expression();
                     $$->loc = ST->gentemp(INT);
                     int temp = nextinstr + 2;
                     emit(to_string(temp), $2->loc, "0", GOTO_EQ);
@@ -369,7 +375,7 @@ unary_operator:
         {
             $$ = '*';
         }
-        | ADD
+        | ADD_
         {
             $$ = '+';
         }
@@ -405,6 +411,7 @@ multiplicative_expression:
                     emit(t, $1->loc, *($1->folder), ARR_IDX_ARG);
                     $1->loc = t;
                     $1->type = tp.nextType;
+                    $$ = $1;
                 }
                 else
                     $$ = $1;
@@ -482,7 +489,8 @@ multiplicative_expression:
 
 additive_expression: 
         multiplicative_expression
-        | additive_expression ADD multiplicative_expression
+        {}
+        | additive_expression ADD_ multiplicative_expression
         {   
             // Indicates addition
             $$ = new expression();
@@ -576,6 +584,7 @@ shift_expression:
 
 relational_expression: 
         shift_expression
+        {}
         | relational_expression LESS_THAN shift_expression
         {
             $$ = new expression();
@@ -593,6 +602,7 @@ relational_expression:
                 $1->loc = t;
                 $1->type = one->type.nextType;
             }
+            $$ = new expression();
             $$->loc = ST->gentemp();
             $$->type = BOOL;
             emit($$->loc, "1", "", ASSIGN);
@@ -619,6 +629,7 @@ relational_expression:
                 $1->loc = t;
                 $1->type = one->type.nextType;
             }
+            $$ = new expression();
             $$->loc = ST->gentemp();
             $$->type = BOOL;
             emit($$->loc, "1", "", ASSIGN);
@@ -645,6 +656,7 @@ relational_expression:
                 $1->loc = t;
                 $1->type = one->type.nextType;
             }
+            $$ = new expression();
             $$->loc = ST->gentemp();
             $$->type = BOOL;
             emit($$->loc, "1", "", ASSIGN);
@@ -671,6 +683,7 @@ relational_expression:
                 $1->loc = t;
                 $1->type = one->type.nextType;
             }
+            $$ = new expression();
             $$->loc = ST->gentemp();
             $$->type = BOOL;
             emit($$->loc, "1", "", ASSIGN);
@@ -705,6 +718,7 @@ equality_expression:
                 $1->loc = t;
                 $1->type = one->type.nextType;
             }
+            $$ = new expression();
             $$->loc = ST->gentemp();
             $$->type = BOOL;
             emit($$->loc, "1", "", ASSIGN);
@@ -731,6 +745,7 @@ equality_expression:
                 $1->loc = t;
                 $1->type = one->type.nextType;
             }
+            $$ = new expression();
             $$->loc = ST->gentemp();
             $$->type = BOOL;
             emit($$->loc, "1", "", ASSIGN);
@@ -764,6 +779,7 @@ and_expression:
                 $1->loc = t;
                 $1->type = one->type.nextType;
             }
+            $$ = new expression();
             $$->loc = ST->gentemp();
             emit($$->loc, $1->loc, $3->loc, BW_AND);
         }
@@ -791,6 +807,7 @@ exclusive_or_expression:
                 $1->loc = t;
                 $1->type = one->type.nextType;
             }
+            $$ = new expression();
             $$->loc = ST->gentemp();
             emit($$->loc, $1->loc, $3->loc, BW_XOR);
         }
@@ -819,6 +836,7 @@ inclusive_or_expression:
                 $1->loc = t;
                 $1->type = one->type.nextType;
             }
+            $$ = new expression();
             $$->loc = ST->gentemp();
             emit($$->loc, $1->loc, $3->loc, BW_OR);
         }
@@ -907,8 +925,8 @@ assignment_expression:
         }
         | unary_expression assignment_operator assignment_expression
         {
-            symbol* sym1 = ST->lookup($1->lookup);
-            symbol* sym2 = ST->lookup($3->lookup);
+            symbol* sym1 = ST->lookup($1->loc);
+            symbol* sym2 = ST->lookup($3->loc);
             if($1->fold == 0) {
                 if(sym1->type.type != ARRAY)
                     emit($1->loc, $3->loc, "", ASSIGN);
@@ -922,7 +940,7 @@ assignment_expression:
         ;
 
 assignment_operator: 
-        ASSIGN
+        ASSIGN_
         { /* Ignored */ }
         | MULTIPLY_ASSIGN
         { /* Ignored */ }
@@ -965,8 +983,12 @@ declaration:
         {
             DataType currType = $1;
             int currSize = -1;
-            if(currType == INT || currType == CHAR || currType == FLOAT)
-                currSize = sizeOfType(currType);
+            if(currType == INT)
+                currSize = __INTEGER_SIZE;
+            else if(currType == CHAR)
+                currSize = __CHARACTER_SIZE;
+            else if(currType == FLOAT)
+                currSize = __FLOAT_SIZE;
             vector<declaration*> decs = *($2);
             for(vector<declaration*>::iterator it = decs.begin(); it != decs.end(); it++) {
                 declaration* currDec = *it;
@@ -1056,7 +1078,7 @@ init_declarator:
             $$ = $1;
             $$->initVal = NULL;
         }
-        | declarator ASSIGN initializer
+        | declarator ASSIGN_ initializer
         {   
             $$ = $1;
             $$->initVal = $3;
@@ -1075,23 +1097,23 @@ storage_class_specifier:
         ;
 
 type_specifier: 
-        VOID
+        VOID_
         {
             $$ = VOID;
         }
-        | CHAR
+        | CHAR_
         {
             $$ = CHAR;
         }
         | SHORT
         { /* Ignored */ }
-        | INT
+        | INT_
         {
             $$ = INT; 
         }
         | LONG
         { /* Ignored */ }
-        | FLOAT
+        | FLOAT_
         {
             $$ = FLOAT;
         }
@@ -1101,7 +1123,7 @@ type_specifier:
         { /* Ignored */ }
         | UNSIGNED
         { /* Ignored */ }
-        | BOOL
+        | BOOL_
         { /* Ignored */ }
         | COMPLEX
         { /* Ignored */ }
@@ -1151,7 +1173,7 @@ enumerator_list:
 enumerator: 
         IDENTIFIER
         {/* Ignored */}
-        | IDENTIFIER ASSIGN constant_expression
+        | IDENTIFIER ASSIGN_ constant_expression
         {/* Ignored */}
         ;
 
@@ -1204,7 +1226,7 @@ direct_declarator:
             $1->type = ARRAY;
             $1->nextType = INT;
             $$ = $1;
-            int index = ST->lookup($4->loc)->initVal->a;
+            int index = ST->lookup($4->loc)->initVal->i;
             $$->li.push_back(index);
         }
         | direct_declarator SQUARE_BRACE_OPEN STATIC type_qualifier_list assignment_expression SQUARE_BRACE_CLOSE
@@ -1224,7 +1246,7 @@ direct_declarator:
             $$ = $1;
             $$->type = FUNCTION;
             symbol* funcData = ST->lookup($$->name, $$->type);
-            symbol* funcTable = new symbolTable();
+            symbolTable* funcTable = new symbolTable();
             funcData->nestedTable = funcTable;
             vector<param*> paramList = *($3);
             for(int i = 0; i < (int)paramList.size(); i++) {
@@ -1253,7 +1275,9 @@ parameter_type_list_opt:
         parameter_type_list
         {}
         | %empty
-        {}
+        {
+            $$ = new vector<param*>;
+        }
         ;
 
 type_qualifier_list_opt: 
@@ -1361,7 +1385,7 @@ designation_opt:
         ;
 
 designation: 
-        designator_list ASSIGN
+        designator_list ASSIGN_
         { /* Ignored */ }
         ;
 
@@ -1455,7 +1479,7 @@ selection_statement:
             $$ = new expression();                                   // Create new statement
             // Merge falselist of expression, nextlist of statement and nextlist of the last N
             $7->nextlist = merge($8->nextlist, $7->nextlist);
-            $$->nextlist = merge($3->nextlist, $7->nextlist);
+            $$->nextlist = merge($3->falselist, $7->nextlist);
         }
         | IF PARENTHESIS_OPEN expression N PARENTHESIS_CLOSE M statement N ELSE M statement N
         {
@@ -1464,9 +1488,9 @@ selection_statement:
             */
             backpatch($4->nextlist, nextinstr);                   // nextlist of N now has nextinstr
             convertIntToBool($3);                                   // Convert expression to bool
-            $$ = new statement();                                   // Create new statement
             backpatch($3->truelist, $6->instr);                            // Backpatching - if expression is true, go to first M, else go to second M
             backpatch($3->falselist, $10->instr);
+            $$ = new expression();                                   // Create new statement
             // Merge nextlist of statement, nextlist of N and nextlist of the last statement
             $$->nextlist = merge($7->nextlist, $8->nextlist);
             $$->nextlist = merge($$->nextlist, $11->nextlist);
@@ -1523,23 +1547,29 @@ iteration_statement:
         ;
 
 jump_statement: 
-        GOTO IDENTIFIER SEMICOLON
+        GOTO_ IDENTIFIER SEMICOLON
         { /* Ignored */ }
         | CONTINUE SEMICOLON
         {}
         | BREAK SEMICOLON
         {}
-        | RETURN expression SEMICOLON
+        | RETURN_ expression SEMICOLON
         {
-            $$ = new expression();
-            if(ST->lookup("RETVAL")->type.type == ST->lookup($2->loc)->type.type)
+            cout << "1****\n";
+            if(ST->lookup("RETVAL")->type.type == ST->lookup($2->loc)->type.type) {
                 emit($2->loc, "", "", RETURN);
-        }
-        | RETURN SEMICOLON
-        {
+                cout << "2****\n";
+            }
             $$ = new expression();
-            if(ST->lookup("RETVAL")->type.type == VOID)
+        }
+        | RETURN_ SEMICOLON
+        {
+            cout << "3****\n";
+            if(ST->lookup("RETVAL")->type.type == VOID) {
                 emit("", "", "", RETURN);
+                cout << "4****\n";
+            }
+            $$ = new expression();
         }
         ;
 
@@ -1572,8 +1602,12 @@ function_prototype:
         {
             DataType currType = $1;
             int currSize = -1;
-            if(currType == INT || currType == CHAR || currType == FLOAT)
-                currSize = sizeOfType(currType);
+            if(currType == INT)
+                currSize = __INTEGER_SIZE;
+            else if(currType == CHAR)
+                currSize = __CHARACTER_SIZE;
+            else if(currType == FLOAT)
+                currSize = __FLOAT_SIZE;
             declaration* currDec = $2;
             symbol* sym = globalST.lookup(currDec->name);
             if(currDec->type == FUNCTION) {
