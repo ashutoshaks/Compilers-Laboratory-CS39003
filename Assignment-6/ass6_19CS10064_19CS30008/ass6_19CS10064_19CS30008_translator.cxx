@@ -82,6 +82,7 @@ string symbolTable::gentemp(DataType t) {
     sym->name = tempName;
     sym->size = sizeOfType(t);
     sym->offset = offset;
+    sym->type.type = t;
     sym->initVal = NULL;
 
     offset += sym->size;

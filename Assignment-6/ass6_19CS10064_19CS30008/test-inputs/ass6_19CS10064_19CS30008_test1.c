@@ -50,11 +50,11 @@ int solve(int a)
     return 0;
 }
 
-int main()
+void main()
 {
     int a = 5;
     int ans = solve(a);
     printInt(ans);
 
-    return 0;
+    return;
 }

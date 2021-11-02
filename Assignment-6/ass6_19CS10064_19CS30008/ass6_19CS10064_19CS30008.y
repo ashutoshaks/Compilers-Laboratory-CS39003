@@ -437,7 +437,7 @@ multiplicative_expression:
                 $1->loc = t;
                 $1->type = one->type.nextType;
             }
-            DataType final = ((one->type.type > two->type.type) ? one->type.type : two->type.type);
+            DataType final = ((one->type.type > two->type.type) ? (one->type.type) : (two->type.type));
             $$->loc = ST->gentemp(final);
             emit($$->loc, $1->loc, $3->loc, MULT);
         }
@@ -459,7 +459,7 @@ multiplicative_expression:
                 $1->loc = t;
                 $1->type = one->type.nextType;
             }
-            DataType final = ((one->type.type > two->type.type) ? one->type.type : two->type.type);
+            DataType final = ((one->type.type > two->type.type) ? (one->type.type) : (two->type.type));
             $$->loc = ST->gentemp(final);
             emit($$->loc, $1->loc, $3->loc, DIV);
         }
@@ -481,7 +481,7 @@ multiplicative_expression:
                 $1->loc = t;
                 $1->type = one->type.nextType;
             }
-            DataType final = ((one->type.type > two->type.type) ? one->type.type : two->type.type);
+            DataType final = ((one->type.type > two->type.type) ? (one->type.type) : (two->type.type));
             $$->loc = ST->gentemp(final);
             emit($$->loc, $1->loc, $3->loc, MOD);
         }
@@ -508,7 +508,7 @@ additive_expression:
                 $1->loc = t;
                 $1->type = one->type.nextType;
             }
-            DataType final = ((one->type.type > two->type.type) ? one->type.type : two->type.type);
+            DataType final = ((one->type.type > two->type.type) ? (one->type.type) : (two->type.type));
             $$->loc = ST->gentemp(final);
             emit($$->loc, $1->loc, $3->loc, ADD);
         }
@@ -530,7 +530,7 @@ additive_expression:
                 $1->loc = t;
                 $1->type = one->type.nextType;
             }
-            DataType final = ((one->type.type > two->type.type) ? one->type.type : two->type.type);
+            DataType final = ((one->type.type > two->type.type) ? (one->type.type) : (two->type.type));
             $$->loc = ST->gentemp(final);
             emit($$->loc, $1->loc, $3->loc, SUB);
         }
@@ -538,6 +538,7 @@ additive_expression:
 
 shift_expression: 
         additive_expression
+        {}
         | shift_expression LSHIFT additive_expression
         {
             // Indicates left shift
@@ -1148,19 +1149,14 @@ specifier_qualifier_list_opt:
         ;
 
 enum_specifier: 
-        ENUM identifier_opt CURLY_BRACE_OPEN enumerator_list CURLY_BRACE_CLOSE
+        ENUM CURLY_BRACE_OPEN enumerator_list CURLY_BRACE_CLOSE
         { /* Ignored */ }
-        | ENUM identifier_opt CURLY_BRACE_OPEN enumerator_list COMMA CURLY_BRACE_CLOSE
+        | ENUM IDENTIFIER CURLY_BRACE_OPEN enumerator_list CURLY_BRACE_CLOSE
+        { /* Ignored */ }
+        | ENUM IDENTIFIER CURLY_BRACE_OPEN enumerator_list COMMA CURLY_BRACE_CLOSE
         { /* Ignored */ }
         | ENUM IDENTIFIER
         { /* Ignored */ }
-        ;
-
-identifier_opt: 
-        IDENTIFIER
-        {/* Ignored */}
-        | %empty
-        {/* Ignored */}
         ;
 
 enumerator_list: 
@@ -1230,8 +1226,6 @@ direct_declarator:
             $$->li.push_back(index);
         }
         | direct_declarator SQUARE_BRACE_OPEN STATIC type_qualifier_list assignment_expression SQUARE_BRACE_CLOSE
-        { /* Ignored */ }
-        | direct_declarator SQUARE_BRACE_OPEN STATIC assignment_expression SQUARE_BRACE_CLOSE
         { /* Ignored */ }
         | direct_declarator SQUARE_BRACE_OPEN type_qualifier_list STATIC assignment_expression SQUARE_BRACE_CLOSE
         { /* Ignored */ }
@@ -1553,21 +1547,23 @@ jump_statement:
         {}
         | BREAK SEMICOLON
         {}
-        | RETURN_ expression SEMICOLON
-        {
-            cout << "1****\n";
-            if(ST->lookup("RETVAL")->type.type == ST->lookup($2->loc)->type.type) {
-                emit($2->loc, "", "", RETURN);
-                cout << "2****\n";
-            }
-            $$ = new expression();
-        }
         | RETURN_ SEMICOLON
         {
             cout << "3****\n";
             if(ST->lookup("RETVAL")->type.type == VOID) {
                 emit("", "", "", RETURN);
                 cout << "4****\n";
+            }
+            $$ = new expression();
+        }
+        | RETURN_ expression SEMICOLON
+        {
+            cout << "1****\n";
+            cout << ST->lookup("RETVAL")->type.type << endl;
+            cout << ST->lookup($2->loc)->type.type << endl;
+            if(ST->lookup("RETVAL")->type.type == ST->lookup($2->loc)->type.type) {
+                emit($2->loc, "", "", RETURN);
+                cout << "2****\n";
             }
             $$ = new expression();
         }
@@ -1602,11 +1598,11 @@ function_prototype:
         {
             DataType currType = $1;
             int currSize = -1;
+            if(currType == CHAR)
+                currSize = __CHARACTER_SIZE;
             if(currType == INT)
                 currSize = __INTEGER_SIZE;
-            else if(currType == CHAR)
-                currSize = __CHARACTER_SIZE;
-            else if(currType == FLOAT)
+            if(currType == FLOAT)
                 currSize = __FLOAT_SIZE;
             declaration* currDec = $2;
             symbol* sym = globalST.lookup(currDec->name);
