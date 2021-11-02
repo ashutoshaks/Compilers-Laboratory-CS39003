@@ -1,8 +1,11 @@
 BASE=ass6_19CS10064_19CS30008
 DIR=./test-outputs
 
-a.out: lex.yy.o $(BASE).tab.o $(BASE)_translator.o
-	g++ lex.yy.o $(BASE).tab.o $(BASE)_translator.o -lfl
+tinyC: lex.yy.o $(BASE).tab.o $(BASE)_translator.o $(BASE)_target_translator.o
+	g++ lex.yy.o $(BASE).tab.o $(BASE)_translator.o $(BASE)_target_translator.o -lfl -o tinyC
+
+$(BASE)_target_translator.o: $(BASE)_target_translator.cxx
+	g++ -c $(BASE)_target_translator.cxx
 
 $(BASE)_translator.o: $(BASE)_translator.h $(BASE)_translator.cxx
 	g++ -c $(BASE)_translator.h
@@ -23,19 +26,21 @@ $(BASE).tab.c: $(BASE).y
 $(BASE).tab.h: $(BASE).y
 	bison -dtv $(BASE).y
 
+lib$(BASE).a: $(BASE).o
+	ar -rcs lib$(BASE).a $(BASE).o
+
+$(BASE).o: $(BASE).c
+	g++ -c $(BASE).c
+
 $(BASE).c:
 	touch $(BASE).c
 
-test: a.out
-	mkdir -p $(DIR)
-	@echo "\nTest Inputs are in ./test-inputs. Running on test files.\n"
-	./a.out < test-inputs/$(BASE)_test1.c > test-outputs/$(BASE)_quads1.out
-	./a.out < test-inputs/$(BASE)_test2.c > test-outputs/$(BASE)_quads2.out
-	./a.out < test-inputs/$(BASE)_test3.c > test-outputs/$(BASE)_quads3.out
-	./a.out < test-inputs/$(BASE)_test4.c > test-outputs/$(BASE)_quads4.out
-	./a.out < test-inputs/$(BASE)_test5.c > test-outputs/$(BASE)_quads5.out
-	./a.out < test-inputs/$(BASE)_test6.c > test-outputs/$(BASE)_quads6.out
-	@echo "\nTest outputs generated and written to ./test-outputs.\n"
+test: tinyC lib$(BASE).a
+	./tinyC 1 < test-inputs/$(BASE)_test1.c > $(BASE)_quads1.out
+
+	gcc -c $(BASE)_1.s
+
+	gcc $(BASE)_1.o -o test1 -L. -l$(BASE) -no-pie
 
 clean:
-	rm -f lex.yy.c *.tab.c *.tab.h *.output *.o a.out *.gch test-outputs/*_quads*.out
+	rm -f lex.yy.c *.tab.c *.tab.h *.output *.o *.s *.a *.out *.gch

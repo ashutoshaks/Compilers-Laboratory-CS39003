@@ -26,7 +26,7 @@ using namespace std;
     function    0 bytes
     char        1 byte
     int         4 bytes
-    pointer     4 bytes
+    pointer     8 bytes
     float       8 bytes
 
 */
@@ -35,7 +35,7 @@ using namespace std;
 #define __FUNCTION_SIZE 0
 #define __CHARACTER_SIZE 1
 #define __INTEGER_SIZE 4
-#define __POINTER_SIZE 4
+#define __POINTER_SIZE 8
 #define __FLOAT_SIZE 8
 
 typedef enum {

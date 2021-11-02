@@ -96,7 +96,6 @@
         jump_statement
         block_item
         block_item_list
-        block_item_list_opt
         initializer
         M
         N
@@ -255,6 +254,7 @@ postfix_expression:
                 $$->loc = ST->gentemp(ST->lookup($1->loc)->type.type);
                 emit($$->loc, $1->loc, "", ASSIGN);
                 emit($1->loc, $1->loc, "1", SUB);
+            }
         }
         | PARENTHESIS_OPEN type_name PARENTHESIS_CLOSE CURLY_BRACE_OPEN initializer_list CURLY_BRACE_CLOSE
         { /* Ignored */ }
