@@ -38,7 +38,6 @@
 //   return 0;
 // }
 
-
 int printStr(char *c);
 int printInt(int i);
 int readInt(int *eP);
