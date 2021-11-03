@@ -122,7 +122,7 @@ public:
     static int tempCount;
 
     symbolTable();
-    symbol* lookup(string name, DataType t = INT, int pc = 0, bool ok = 0);
+    symbol* lookup(string name, DataType t = INT, int pc = 0);
     symbol* searchGlobal(string name);
     string gentemp(DataType t = INT);
 

@@ -108,8 +108,6 @@ void quadCode(quad q, ofstream& sfile) {
     symbol* glb2 = globalST.searchGlobal(q.arg2);
     symbol* glb3 = globalST.searchGlobal(q.result);
 
-    // sfile << "# loc3->offset = " << loc3->offset << " loc3->name = " << loc3->name << " loc3->type = " << loc3->type.type << endl;
-
     if(ST != &globalST) {
         if(glb1 == NULL)
             off1 = loc1->offset;
@@ -146,10 +144,7 @@ void quadCode(quad q, ofstream& sfile) {
     if(hasStrLabel)
         toPrintRes = strLabel;
 
-    // sfile << "# offress = " << offRes << endl;
-
     if(q.op == ASSIGN) {
-        // sfile << "# " << toPrint1 << " ** " << toPrint2 << " ** " << toPrintRes << endl;
         if(q.result[0] != 't' || loc3->type.type == INT || loc3->type.type == POINTER) {
             if(loc3->type.type != POINTER) {
                 if(q.arg1[0] < '0' || q.arg1[0] > '9')

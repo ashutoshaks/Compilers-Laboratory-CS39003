@@ -43,10 +43,8 @@ symbol::symbol(): nestedTable(NULL) {}
 symbolTable::symbolTable(): offset(0) {}
 
 
-symbol* symbolTable::lookup(string name, DataType t, int pc, bool ok) {
+symbol* symbolTable::lookup(string name, DataType t, int pc) {
     if(table.count(name) == 0) {
-        if(ok)
-            cout << "*** " << name << " *** haha\n";
         symbol* sym = new symbol();
         sym->name = name;
         sym->type.type = t;
@@ -66,8 +64,6 @@ symbol* symbolTable::lookup(string name, DataType t, int pc, bool ok) {
         symbols.push_back(sym);
         table[name] = sym;
     }
-    if(ok)
-        cout << "*** " << name << " *** hoho\n";
     return table[name];
 }
 
@@ -100,7 +96,7 @@ void symbolTable::print(string tableName) {
         cout << '-';
     }
     cout << endl;
-    cout << "Symbol Table: " << setfill(' ') << left << setw(50) << tableName;
+    cout << "Symbol Table: " << setfill(' ') << left << setw(50) << tableName << endl;
     // cout << "Parent Table: " << setfill(' ') << left << setw(50) << ((this->parent != NULL) ? this->parent->name : "NULL") << endl;
     for(int i = 0; i < 120; i++)
         cout << '-';
@@ -253,17 +249,15 @@ void quadArray::print() {
     int cnt = 0;
     // Print each of the quads one by one
     for(int i = 0; i < (int)quads.size(); i++) {
-        // if(it->op != "label") {
-        //     cout << left << setw(4) << cnt << ":    ";
-        //     it->print();
-        // }
-        // else {
-        //     cout << endl << left << setw(4) << cnt << ": ";
-        //     it->print();
-        // }
-
-        cout << i << ":    " << quads[i].print() << endl;
+        if(quads[i].op != FUNC_BEG && quads[i].op != FUNC_END)
+            cout << left << setw(4) << i << ":    ";
+        else if(quads[i].op == FUNC_BEG)
+            cout << endl << left << setw(4) << i << ": ";
+        else if(quads[i].op == FUNC_END)
+            cout << left << setw(4) << i << ": ";
+        cout << quads[i].print() << endl;
     }
+    cout << endl;
 }
 
 
