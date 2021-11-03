@@ -29,7 +29,7 @@ int printStr(char *str)
 
 
 // Function to read an integer from STDIN
-int readInt(int *n)
+int readInt(int *eP)
 {
     // ranges for positive and negative integers
     const long int MAX_INT_POSITIVE = 2147483647;
@@ -38,6 +38,7 @@ int readInt(int *n)
     char buff[BUFF_SIZE];
     int len, i = 0, isNegative = 0;
     long int num = 0;
+    int n;
 
     __asm__ __volatile__ (
         "movl $0, %%eax \n\t"
@@ -47,30 +48,42 @@ int readInt(int *n)
         :"S"(buff), "d"(BUFF_SIZE)
     );
 
-    if(len <= 0)
-        return ERR;
-    if((buff[0] != '+') && (buff[0] != '-') && (buff[0] < '0' || buff[0] > '9'))    // check for valid first character
-        return ERR;
+    if(len <= 0) {
+        *eP = ERR;
+        return 0;
+    }
+    if((buff[0] != '+') && (buff[0] != '-') && (buff[0] < '0' || buff[0] > '9')) {    // check for valid first character
+        *eP = ERR;
+        return 0;
+    }
 
     if(buff[0] == '-' || buff[0] == '+') {      // check for sign if present
         if(buff[0] == '-')
             isNegative = 1;
         i++;
-        if(buff[i] < '0' || buff[i] > '9')
-            return ERR;
+        if(buff[i] < '0' || buff[i] > '9') {
+            *eP = ERR;
+            return 0;
+        }
     }
 
     // continue till a space, tab or newline is found
     while(buff[i] != ' ' && buff[i] != '\n' && buff[i] != '\t') {
-        if(buff[i] < '0' || buff[i] > '9')      // invalid character
-            return ERR;
+        if(buff[i] < '0' || buff[i] > '9') {      // invalid character
+            *eP = ERR;
+            return 0;
+        }
         int digit = buff[i] - '0';
 
         // check for range
-        if(!isNegative && 1L * num * 10 + digit > MAX_INT_POSITIVE)
-            return ERR;
-        else if(isNegative && 1L * num * 10 + digit > MAX_INT_NEGATIVE)
-            return ERR;
+        if(!isNegative && 1L * num * 10 + digit > MAX_INT_POSITIVE) {
+            *eP = ERR;
+            return 0;
+        }
+        else if(isNegative && 1L * num * 10 + digit > MAX_INT_NEGATIVE) {
+            *eP = ERR;
+            return 0;
+        }
         
         num = num * 10 + digit;
         i++;
@@ -78,8 +91,9 @@ int readInt(int *n)
 
     if(isNegative)      // if the original number was negative, multiply by -1
         num *= -1;
-    *n = (int)num;
-    return (*n);
+    n = (int)num;
+    *eP = OK;
+    return n;
 }
 
 
