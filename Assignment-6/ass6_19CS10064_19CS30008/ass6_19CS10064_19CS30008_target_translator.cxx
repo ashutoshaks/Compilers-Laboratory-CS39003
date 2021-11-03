@@ -448,7 +448,6 @@ void quadCode(quad q, ofstream& sfile) {
 }
 
 
-
 void generateTargetCode(ofstream& sfile) {
     printGlobal(sfile);
     printStrings(sfile);
@@ -511,7 +510,7 @@ void generateTargetCode(ofstream& sfile) {
 
 
 int main(int argc, char* argv[]) {
-    // ST = &globalST;
+    ST = &globalST;
     yyparse();
 
     asmFileName = "ass6_19CS10064_19CS30008_" + string(argv[argc - 1]) + ".s";

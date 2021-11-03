@@ -1,5 +1,4 @@
 BASE=ass6_19CS10064_19CS30008
-DIR=./test-outputs
 
 tinyC: lex.yy.o $(BASE).tab.o $(BASE)_translator.o $(BASE)_target_translator.o
 	g++ lex.yy.o $(BASE).tab.o $(BASE)_translator.o $(BASE)_target_translator.o -lfl -o tinyC
@@ -36,11 +35,13 @@ $(BASE).c:
 	touch $(BASE).c
 
 test: tinyC lib$(BASE).a
-	./tinyC 1 < test-inputs/$(BASE)_test1.c > $(BASE)_quads1.out
+	@mkdir -p test-outputs
+	@mkdir -p bin
 
-	gcc -c $(BASE)_1.s
-
-	gcc $(BASE)_1.o -o test1 -L. -l$(BASE) -no-pie
+	./tinyC 1 < test-inputs/$(BASE)_test1.c > test-outputs/$(BASE)_quads1.out
+	mv $(BASE)_1.s test-outputs/$(BASE)_1.s
+	gcc -c test-outputs/$(BASE)_1.s -o test-outputs/$(BASE)_1.o
+	gcc test-outputs/$(BASE)_1.o -o bin/test1 -L. -l$(BASE) -no-pie
 
 clean:
-	rm -f lex.yy.c *.tab.c *.tab.h *.output *.o *.s *.a *.out *.gch tinyC test1
+	rm -f lex.yy.c *.tab.c *.tab.h *.output *.o *.s *.a *.out *.gch tinyC test-outputs/* bin/*

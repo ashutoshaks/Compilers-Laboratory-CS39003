@@ -213,10 +213,6 @@ list<int> merge(list<int> list1, list<int> list2);
 */
 void backpatch(list<int> l, int address);
 
-
-// bool typecheck(symbol* &s1, symbol* &s2);
-// bool typecheck(symbolType* t1, symbolType* t2);
-
 /*
     Converts a symbol of one type to another and returns a pointer to the converted symbol
 */
@@ -228,11 +224,6 @@ void convertToType(string t, DataType to, string f, DataType from);
     Converts an int to a bool and adds required attributes
 */
 void convertIntToBool(expression* expr);
-
-/*
-    Converts a bool to an int and adds required attributes
-*/
-// expression* convertBoolToInt(expression* expr);
 
 /*
     Auxiliary function to get the size of a type

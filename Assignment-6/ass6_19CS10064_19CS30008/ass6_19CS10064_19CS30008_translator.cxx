@@ -18,7 +18,7 @@ int symbolTable::tempCount = 0;
 
 quadArray quadList;
 symbolTable globalST;
-symbolTable* ST = &globalST;       // initialize to &globalST in main
+symbolTable* ST;       // initialize to &globalST in main
 
 
 void symbolValue::setInitVal(int val) {
@@ -97,7 +97,6 @@ void symbolTable::print(string tableName) {
     }
     cout << endl;
     cout << "Symbol Table: " << setfill(' ') << left << setw(50) << tableName << endl;
-    // cout << "Parent Table: " << setfill(' ') << left << setw(50) << ((this->parent != NULL) ? this->parent->name : "NULL") << endl;
     for(int i = 0; i < 120; i++)
         cout << '-';
     cout << endl;
@@ -455,18 +454,3 @@ string getInitVal(symbol* sym) {
     else
         return "-";
 }
-
-// int main() {
-//     STCount = 0;                            // Initialize STCount to 0
-//     globalST = new symbolTable("Global");   // Create global symbol table
-//     currentST = globalST;                   // Make global symbol table the currently active symbol table
-//     blockName = "";
-
-//     yyparse();
-//     globalST->update();
-//     quadList.print();       // Print Three Address Code
-//     cout << endl;
-//     globalST->print();      // Print symbol tables
-
-//     return 0;
-// }
