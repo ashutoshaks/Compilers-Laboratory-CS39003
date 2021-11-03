@@ -10,7 +10,7 @@
     */
     #include <stdio.h>
     #include "ass6_19CS10064_19CS30008_translator.h"
-    #include "y.tab.h"
+    #include "ass6_19CS10064_19CS30008.tab.h"
 %}
 
 %option yylineno

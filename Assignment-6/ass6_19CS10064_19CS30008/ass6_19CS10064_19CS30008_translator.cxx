@@ -43,8 +43,10 @@ symbol::symbol(): nestedTable(NULL) {}
 symbolTable::symbolTable(): offset(0) {}
 
 
-symbol* symbolTable::lookup(string name, DataType t, int pc) {
+symbol* symbolTable::lookup(string name, DataType t, int pc, bool ok) {
     if(table.count(name) == 0) {
+        if(ok)
+            cout << "*** " << name << " *** haha\n";
         symbol* sym = new symbol();
         sym->name = name;
         sym->type.type = t;
@@ -61,10 +63,11 @@ symbol* symbolTable::lookup(string name, DataType t, int pc) {
             sym->type.pointers = pc;
             sym->type.type = ARRAY;
         }
-
         symbols.push_back(sym);
         table[name] = sym;
     }
+    if(ok)
+        cout << "*** " << name << " *** hoho\n";
     return table[name];
 }
 
@@ -243,7 +246,6 @@ void quadArray::print() {
         cout << '-';
     cout << endl;
     cout << "THREE ADDRESS CODE (TAC):" << endl;
-    cout << (int)quads.size() << endl;
     for(int i = 0; i < 120; i++)
         cout << '-';
     cout << endl;

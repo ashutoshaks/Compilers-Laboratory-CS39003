@@ -1,8 +1,8 @@
 BASE=ass6_19CS10064_19CS30008
 DIR=./test-outputs
 
-tinyC: lex.yy.o y.tab.o $(BASE)_translator.o $(BASE)_target_translator.o
-	g++ lex.yy.o y.tab.o $(BASE)_translator.o $(BASE)_target_translator.o -lfl -o tinyC
+tinyC: lex.yy.o $(BASE).tab.o $(BASE)_translator.o $(BASE)_target_translator.o
+	g++ lex.yy.o $(BASE).tab.o $(BASE)_translator.o $(BASE)_target_translator.o -lfl -o tinyC
 
 $(BASE)_target_translator.o: $(BASE)_target_translator.cxx
 	g++ -c $(BASE)_target_translator.cxx
@@ -14,17 +14,17 @@ $(BASE)_translator.o: $(BASE)_translator.h $(BASE)_translator.cxx
 lex.yy.o: lex.yy.c
 	g++ -c lex.yy.c
 
-y.tab.o: y.tab.c
-	g++ -c y.tab.c
+$(BASE).tab.o: $(BASE).tab.c
+	g++ -c $(BASE).tab.c
 
-lex.yy.c: $(BASE).l y.tab.h $(BASE)_translator.h
+lex.yy.c: $(BASE).l $(BASE).tab.h $(BASE)_translator.h
 	flex $(BASE).l
 
-y.tab.c: $(BASE).y
-	yacc -dtv $(BASE).y
+$(BASE).tab.c: $(BASE).y
+	bison -dtv $(BASE).y
 
-y.tab.h: $(BASE).y
-	yacc -dtv $(BASE).y
+$(BASE).tab.h: $(BASE).y
+	bison -dtv $(BASE).y
 
 lib$(BASE).a: $(BASE).o
 	ar -rcs lib$(BASE).a $(BASE).o

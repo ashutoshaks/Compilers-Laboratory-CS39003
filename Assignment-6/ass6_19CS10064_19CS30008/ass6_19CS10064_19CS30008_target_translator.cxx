@@ -22,7 +22,7 @@ vector<string> stringConsts;
 map<int, string> labels;
 stack<pair<string, int>> parameters;
 int labelCount = 0;
-string funcRunning;
+string funcRunning = "";
 string asmFileName;
 
 
@@ -91,7 +91,7 @@ void generatePrologue(int memBind, ofstream& sfile) {
     sfile << funcRunning << ":" << endl;
     sfile << "\tpushq\t" << "%rbp" << endl;
     sfile << "\tmovq\t" << "%rsp, %rbp" << endl;
-    sfile << "\tsubq\t" << (memBind / width + 1) * width << ", %rsp" << endl;
+    sfile << "\tsubq\t$" << (memBind / width + 1) * width << ", %rsp" << endl;
 }
 
 
@@ -107,6 +107,8 @@ void quadCode(quad q, ofstream& sfile) {
     symbol* glb1 = globalST.searchGlobal(q.arg1);
     symbol* glb2 = globalST.searchGlobal(q.arg2);
     symbol* glb3 = globalST.searchGlobal(q.result);
+
+    // sfile << "# loc3->offset = " << loc3->offset << " loc3->name = " << loc3->name << " loc3->type = " << loc3->type.type << endl;
 
     if(ST != &globalST) {
         if(glb1 == NULL)
@@ -144,7 +146,10 @@ void quadCode(quad q, ofstream& sfile) {
     if(hasStrLabel)
         toPrintRes = strLabel;
 
+    // sfile << "# offress = " << offRes << endl;
+
     if(q.op == ASSIGN) {
+        // sfile << "# " << toPrint1 << " ** " << toPrint2 << " ** " << toPrintRes << endl;
         if(q.result[0] != 't' || loc3->type.type == INT || loc3->type.type == POINTER) {
             if(loc3->type.type != POINTER) {
                 if(q.arg1[0] < '0' || q.arg1[0] > '9')
@@ -160,8 +165,10 @@ void quadCode(quad q, ofstream& sfile) {
                 sfile << "\tmovq\t%rax, " << toPrintRes << endl; 
             }
         }
-        else
-            sfile << "\tmovb\t$" << q.arg1[0] << ", " << toPrintRes << endl;
+        else {
+            int temp = q.arg1[0];
+            sfile << "\tmovb\t$" << temp << ", " << toPrintRes << endl;
+        }
     }
     else if(q.op == U_MINUS) {
         sfile << "\tmovl\t" << toPrint1 << ", %eax" << endl;
@@ -331,22 +338,17 @@ void quadCode(quad q, ofstream& sfile) {
     }
     else if(q.op == PARAM) {
         int paramSize;
-        if(glb3 == NULL) {
-            if(loc3->type.type == INT)
-                paramSize = __INTEGER_SIZE;
-            else if(loc3->type.type == CHAR)
-                paramSize = __CHARACTER_SIZE;
-            else
-                paramSize = __POINTER_SIZE;
-        }
-        else {
-            if(glb3->type.type == INT)
-                paramSize = __INTEGER_SIZE;
-            else if(glb3->type.type == CHAR)
-                paramSize = __CHARACTER_SIZE;
-            else
-                paramSize = __POINTER_SIZE;
-        }
+        DataType t;
+        if(glb3 != NULL)
+            t = glb3->type.type;
+        else
+            t = loc3->type.type;
+        if(t == INT)
+            paramSize = __INTEGER_SIZE;
+        else if(t == CHAR)
+            paramSize = __CHARACTER_SIZE;
+        else
+            paramSize = __POINTER_SIZE;
         stringstream ss;
         if(q.result[0] == '.')
             ss << "\tmovq\t$" << toPrintRes << ", %rax" <<endl;
@@ -356,12 +358,10 @@ void quadCode(quad q, ofstream& sfile) {
             if(loc3->type.type != ARRAY) {
                 if(loc3->type.type != POINTER)
                     ss << "\tmovq\t" << toPrintRes << ", %rax" <<endl;
-                else {
-                    if(loc3 == NULL)
-                        ss << "\tleaq\t" << toPrintRes << ", %rax" <<endl;
-                    else
-                        ss << "\tmovq\t" << toPrintRes << ", %rax" <<endl;
-                }
+                else if(loc3 == NULL)
+                    ss << "\tleaq\t" << toPrintRes << ", %rax" <<endl;
+                else
+                    ss << "\tmovq\t" << toPrintRes << ", %rax" <<endl;
             }
             else {
                 if(offRes < 0)
@@ -457,9 +457,9 @@ void quadCode(quad q, ofstream& sfile) {
 void generateTargetCode(ofstream& sfile) {
     printGlobal(sfile);
     printStrings(sfile);
-    setLabels();
     symbolTable* currFuncTable = NULL;
     symbol* currFunc = NULL;
+    setLabels();
 
     for(int i = 0; i < (int)quadList.quads.size(); i++) {
         sfile << "# " << quadList.quads[i].print() << endl;
@@ -486,7 +486,7 @@ void generateTargetCode(ofstream& sfile) {
                     if(!takingParam) {
                         currFuncTable->symbols[j]->offset = memBind;
                         if(currFuncTable->symbols.size() > j + 1)
-                            memBind = -currFuncTable->symbols[j + 1]->size;
+                            memBind -= currFuncTable->symbols[j + 1]->size;
                     }
                     else {
                         currFuncTable->symbols[j]->offset = memBind;

@@ -1549,21 +1549,15 @@ jump_statement:
         {}
         | RETURN_ SEMICOLON
         {
-            cout << "3****\n";
             if(ST->lookup("RETVAL")->type.type == VOID) {
                 emit("", "", "", RETURN);
-                cout << "4****\n";
             }
             $$ = new expression();
         }
         | RETURN_ expression SEMICOLON
         {
-            cout << "1****\n";
-            cout << ST->lookup("RETVAL")->type.type << endl;
-            cout << ST->lookup($2->loc)->type.type << endl;
             if(ST->lookup("RETVAL")->type.type == ST->lookup($2->loc)->type.type) {
                 emit($2->loc, "", "", RETURN);
-                cout << "2****\n";
             }
             $$ = new expression();
         }

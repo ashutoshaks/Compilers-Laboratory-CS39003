@@ -79,7 +79,7 @@ int readInt(int *n)
     if(isNegative)      // if the original number was negative, multiply by -1
         num *= -1;
     *n = (int)num;
-    return OK;
+    return (*n);
 }
 
 
