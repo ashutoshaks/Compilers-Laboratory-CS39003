@@ -1,12 +1,14 @@
-// the program tests : function declaration , calling , global variable scope, some operators : / % * ... 
+// This program tests function declaration, calling, global variable scope, some operators : / % * ... 
+// Checks basic statements, expression, readInt and printInt library functions created earlier
+// Also checks the recursive fib function to check the function call and return methodology
 int printStr (char *ch);
 int printInt (int n);
 int readInt (int *eP);
 
-int global_var = 0;                                               // test : global variable
+int global_var = 0;                         // Testing global variable
 int counter = 0;
 
-int fibn (int n);
+int fibn (int n);                           // Testing function declaration
 
 int main () {
     counter++;
@@ -16,6 +18,7 @@ int main () {
     n = readInt(&flag);
     int i;
     int fib[100];
+
     // for loop to print the fibonacci series.
     for (i = 0; i < n; i++) {
         fib[i] = fibn(i+1);
@@ -43,7 +46,7 @@ int fibn (int n) {
         return 1;
     }
  
-    // Recursive function
+    // Testing recursive function
     else {
         return fibn(n - 1) + fibn(n - 2);
     }

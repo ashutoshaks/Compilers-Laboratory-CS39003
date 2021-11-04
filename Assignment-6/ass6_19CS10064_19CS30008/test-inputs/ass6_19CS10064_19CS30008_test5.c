@@ -1,13 +1,10 @@
-/**  
- * Tests : pointers , array arithemtic printIntng array elements 
- * printIntng pointers, pointer rithmetic , operations.
- */
+// Testing various functionalities through merge sort
 
 int printStr (char *ch);
 int printInt (int n);
 int readInt (int *eP);
 
-int merge (int arr[], int l, int m, int r) {
+int merge (int arr[], int l, int m, int r) {    // Passing array as parameter
     int i, j, k;
     int n1 = m - l + 1;
     int n2 =  r - m; 
@@ -24,7 +21,7 @@ int merge (int arr[], int l, int m, int r) {
     i = 0;
     j = 0;
     k = l;
-    while (i < n1 && j < n2) {
+    while (i < n1 && j < n2) {                  // Testing while loop
         if (L[i] <= R[j]) {
             arr[k] = L[i];
             i++;
@@ -52,10 +49,10 @@ int merge (int arr[], int l, int m, int r) {
 }
  
 
-void mergeSort (int arr[], int l, int r) {
+void mergeSort (int arr[], int l, int r) {      // Testing void return type
     if (l < r) {
         int m = (l + r) / 2; 
-        mergeSort(arr, l, m);
+        mergeSort(arr, l, m);                   // Testing recursion
         mergeSort(arr, m + 1, r);
         merge(arr, l, m, r);
     }

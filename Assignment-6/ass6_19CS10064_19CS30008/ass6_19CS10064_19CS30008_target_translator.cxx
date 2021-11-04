@@ -85,7 +85,7 @@ void setLabels() {
 
 void generatePrologue(int memBind, ofstream& sfile) {
     int width = 16;
-    sfile << "\t.text" << endl;
+    sfile << endl << "\t.text" << endl;
     sfile << "\t.globl\t" << funcRunning << endl;
     sfile << "\t.type\t" << funcRunning << ", @function" << endl;
     sfile << funcRunning << ":" << endl;
@@ -519,7 +519,7 @@ int main(int argc, char* argv[]) {
 
     quadList.print();
 
-    ST->print("ST.Global");
+    ST->print("ST.global");
 
     ST = &globalST;
 

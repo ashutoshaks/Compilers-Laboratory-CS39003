@@ -1,11 +1,3 @@
-
-/*
- *   Test file to check basic statements, expression, readInt and printInt  
- *   library functions created in assignment 2
- *   also checks the recursive fib function to check the function 
- *   call and return methodology
-*/
-
 int printStr (char *ch);
 int printInt (int n);
 int readInt (int *eP);
@@ -18,38 +10,37 @@ int w[10];                      // 1D array declaration
 int a = 4, *p, b;               // pointer declaration
 
 int main () {
-    // Variable Declaration
-    int x;
+    int x;                      // Variable Declarations
     int y;
     int flag;
     printStr("Enter x: ");
     x = readInt(&flag);
     printStr("Enter y: ");
     y = readInt(&flag);
-    char ch = 'c';     // character definitions
+    char ch = 'c';              // Character definitions
 
-    // Arithmetic Operations
-    i = x + y;
+    // Arithmetic Operators
+    i = x + y;                  // Addition  
     printStr("i = x + y = ");
     printInt(i);
     printStr("\n");
 
-    j = x - y;
+    j = x - y;                  // Subtraction
     printStr("j = x - y = ");
     printInt(j);
     printStr("\n");
 
-    k = x * y;
+    k = x * y;                  // Multiplication
     printStr("k = x * y = ");
     printInt(k);
     printStr("\n");
 
-    l = x / y;
+    l = x / y;                  // Division
     printStr("l = x / y = ");
     printInt(l);
     printStr("\n");
 
-    m = x % y;
+    m = x % y;                  // Modulo
     printStr("m = x % y = ");
     printInt(m);
     printStr("\n");

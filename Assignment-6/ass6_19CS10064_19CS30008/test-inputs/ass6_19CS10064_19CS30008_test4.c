@@ -1,10 +1,10 @@
-// include predefined functions 
-
+// Include predefined functions 
 int printStr (char *ch);
 int printInt (int n);
 int readInt (int *eP);
 
-int maxSubArrSum (int a[], int n) { 
+// Function to find maximum subarray sum
+int maxSubArrSum (int a[], int n) {                 // Array as parameter                 
     int max_so_far = -1000, max_ending_here = 0; 
     int i;
     for (i = 0; i < n; i++) { 
@@ -31,7 +31,7 @@ int main() {
     a[5]= 10;
     a[6]= 50;
     a[7]= -370;
-    int max_subArr_sum = maxSubArrSum(a, 8); 
+    int max_subArr_sum = maxSubArrSum(a, 8);        // Passing array as argument
     printStr("Maximum contiguous sum is ");
     printInt(max_subArr_sum);
     printStr("\n");

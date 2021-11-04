@@ -6,20 +6,17 @@ int readInt (int *eP);
 float d = 2.3;
 char c; 
 int i, j, k, l, m, n, o;
-// int w[10];                      // 1D array declaration
-int a = 4, *p, b;               // pointer declaration
+int a = 4, *p, b;                           // Pointer declaration
 
 int main() {
-    {
-    // test do while
     int do_iterator = 1;
-    do {
+    do {                                    // Testing do while loop
         printStr("Entered for iteration ");
-        printInt(do_iterator++);          // incrementor in printStr
+        printInt(do_iterator++);            // Incrementor in printStr
         printStr("\n");
     } while (do_iterator < 10);
 
-    // scope management 
+    // Scope management 
     { 
         int w = 10;
         printStr("\nScope 1: ");
