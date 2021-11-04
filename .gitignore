@@ -8,7 +8,7 @@ lex.yy.c
 *.tab.h
 *.gch
 *.output
-output.txt
+**/output.txt
 Slides/
-Assignment-3/ass3_19CS10064_19CS30008/output.txt
-
+bin/
+tinyC
