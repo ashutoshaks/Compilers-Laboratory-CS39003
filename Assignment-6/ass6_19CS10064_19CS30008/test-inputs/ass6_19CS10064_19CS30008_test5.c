@@ -5,59 +5,90 @@
 
 int printStr (char *ch);
 int printInt (int n);
-int readInt (int *n);
+int readInt (int *eP);
 
-// Global declarations
-float d = 2.3;
-char c; 
-int i, j, k, l, m, n, o;
-int w[10];                      // 1D array declaration
-int a = 4, *p, b;               // pointer declaration
-
-// Typecasting and pointers
-void swap (int *xp, int *yp) {                      // test : pointers
-    int temp = *&(*xp);
-    *xp = *yp;
-    *yp = temp;
-    return;
-}
-
-void sort (int *arr, int n) {
-    int i, j, min_idx;
+int merge (int arr[], int l, int m, int r) {
+    int i, j, k;
+    int n1 = m - l + 1;
+    int n2 =  r - m; 
+    int L[6], R[6];
+ 
+    for(i = 0; i < n1; i++) {
+        L[i] = arr[l + i];
+    }
+    for(j = 0; j < n2; j++) {
+        int p = m + j + 1;
+        R[j] = arr[p];
+    }
+ 
     i = 0;
     j = 0;
-    for (i = 0; i < n-1; i++) {
-        min_idx = i;
-        for (j = i+1; j < n; j++) {
-            if (arr[j] < arr[min_idx]) {
-                min_idx = j;
-            }
+    k = l;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
         }
-        swap(&arr[min_idx], &arr[i]);
+        else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
     }
-    return;
-}
+ 
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+ 
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
 
-int main() {
-    int arr[6];
-    printStr("Enter 6 array elements: ");
-    for (i = 0; i < 6; i++) {  
-        readInt(&arr[i]);      
-    }
-
-    // test :  print numbers
-    printStr("Entered array is :");
-    for (i = 0; i < 6; i++) {  
-        printInt(arr[i]);
-        printStr("\n");         
-    }
-    int n = 6;
-    sort(arr, 5);
-    printStr("Sorted array is :");
-    for (i = 0; i < 6; i++) {  
-        printInt(arr[i]);
-        printStr("\n");         
-    }
     return 0;
 }
+ 
 
+void mergeSort (int arr[], int l, int r) {
+    if (l < r) {
+        int m = (l + r) / 2; 
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}
+
+void printArray (int arr[], int n) {
+    int i;
+    for (i = 0; i < n; i++) {
+        printInt(arr[i]);
+        printStr(" ");
+    }
+    printStr("\n");
+}
+ 
+int main() {
+    printStr("Merge Sort\n");
+    
+    int arr[6];
+    arr[0] = 64;
+    arr[1] = 21;
+    arr[2] = 11;
+    arr[3] = 15;
+    arr[4] = 28;
+    arr[5] = 9;
+    int n = 6;
+ 
+    printStr("Original array: \n");
+    printArray(arr, n);
+ 
+    mergeSort(arr, 0, n - 1);
+ 
+    printStr("Sorted array: \n");
+    printArray(arr, n);
+
+    return 0;
+}

@@ -2,14 +2,7 @@
 
 int printStr (char *ch);
 int printInt (int n);
-int readInt (int *n);
-
-// Global declarations
-float d = 2.3;
-char c; 
-int i, j, k, l, m, n, o;
-int w[10];                      // 1D array declaration
-int a = 4, *p, b;               // pointer declaration
+int readInt (int *eP);
 
 int maxSubArrSum (int a[], int n) { 
     int max_so_far = -1000, max_ending_here = 0; 
@@ -27,7 +20,7 @@ int maxSubArrSum (int a[], int n) {
     return max_so_far; 
 } 
   
-//Driver program to test maxSubArrSum
+// Driver program to test maxSubArrSum
 int main() { 
     int a[8];
     a[0]= -20;
