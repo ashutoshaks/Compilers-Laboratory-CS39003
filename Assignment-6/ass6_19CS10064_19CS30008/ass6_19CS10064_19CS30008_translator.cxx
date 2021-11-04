@@ -11,16 +11,18 @@
 #include <iomanip>
 using namespace std;
 
-
+// Initialize the global variables
 int nextinstr = 0;
 
+// Intiailize the static variables
 int symbolTable::tempCount = 0;
 
 quadArray quadList;
 symbolTable globalST;
-symbolTable* ST;       // initialize to &globalST in main
+symbolTable* ST;
 
 
+// Implementations of constructors and functions for the symbolValue class
 void symbolValue::setInitVal(int val) {
     c = f = i = val;
     p = NULL;
@@ -36,6 +38,8 @@ void symbolValue::setInitVal(float val) {
     p = NULL;
 }
 
+
+// Implementations of constructors and functions for the symbol class
 symbol::symbol(): nestedTable(NULL) {}
 
 
@@ -77,6 +81,7 @@ string symbolTable::gentemp(DataType t) {
     // Create the name for the temporary
     string tempName = "t" + to_string(symbolTable::tempCount++);
     
+    // Initialize the required attributes
     symbol* sym = new symbol();
     sym->name = tempName;
     sym->size = sizeOfType(t);
@@ -113,6 +118,7 @@ void symbolTable::print(string tableName) {
         cout << '-';
     cout << endl;
 
+    // For storing nested symbol tables
     vector<pair<string, symbolTable*>> tableList;
 
     // Print the symbols in the symbol table
@@ -146,12 +152,14 @@ void symbolTable::print(string tableName) {
 
 }
 
+
+// Implementations of constructors and functions for the quad class
 quad::quad(string res_, string arg1_, string arg2_, opcode op_): op(op_), arg1(arg1_), arg2(arg2_), result(res_) {}
 
 
 string quad::print() {
     string out = "";
-    if(op >= ADD && op <= BW_XOR) {
+    if(op >= ADD && op <= BW_XOR) {                 // Binary operators
         out += (result + " = " + arg1 + " ");
         switch(op) {
             case ADD: out += "+"; break;
@@ -167,7 +175,7 @@ string quad::print() {
         }
         out += (" " + arg2);
     }
-    else if(op >= BW_U_NOT && op <= U_NEG) {
+    else if(op >= BW_U_NOT && op <= U_NEG) {        // Unary operators
         out += (result + " = ");
         switch(op) {
             case BW_U_NOT: out += "~"; break;
@@ -179,7 +187,7 @@ string quad::print() {
         }
         out += arg1;
     }
-    else if(op >= GOTO_EQ && op <= IF_FALSE_GOTO) {
+    else if(op >= GOTO_EQ && op <= IF_FALSE_GOTO) { // Conditional operators
         out += ("if " + arg1 + " ");
         switch(op) {
             case GOTO_EQ: out += "=="; break;
@@ -193,7 +201,7 @@ string quad::print() {
         }
         out += (" " + arg2 + " goto " + result);
     }
-    else if(op >= CtoI && op <= CtoF) {
+    else if(op >= CtoI && op <= CtoF) {             // Type Conversion functions
         out += (result + " = ");
         switch(op) {
             case CtoI: out += "CharToInt"; break;
@@ -206,29 +214,29 @@ string quad::print() {
         out += ("(" + arg1 + ")");
     }
 
-    else if(op == ASSIGN)
+    else if(op == ASSIGN)                       // Assignment operator
         out += (result + " = " + arg1);
-    else if(op == GOTO)
+    else if(op == GOTO)                         // Goto
         out += ("goto " + result);
-    else if(op == RETURN)
+    else if(op == RETURN)                       // Return from a function
         out += ("return " + result);
-    else if(op == PARAM)
+    else if(op == PARAM)                        // Parameters for a function
         out += ("param " + result);
-    else if(op == CALL) {
+    else if(op == CALL) {                       // Call a function
         if(arg2.size() > 0)
             out += (arg2 + " = ");
         out += ("call " + result + ", " + arg1);
     }
-    else if(op == ARR_IDX_ARG)
+    else if(op == ARR_IDX_ARG)                  // Array indexing
         out += (result + " = " + arg1 + "[" + arg2 + "]");
-    else if(op == ARR_IDX_RES)
+    else if(op == ARR_IDX_RES)                  // Array indexing
         out += (result + "[" + arg2 + "] = " + arg1);
-    else if(op == FUNC_BEG)
+    else if(op == FUNC_BEG)                     // Function begin
         out += (result + ": ");
-    else if(op == FUNC_END) {
+    else if(op == FUNC_END) {                   // Function end
         out += ("function " + result + " ends");
     }
-    else if(op == L_DEREF)
+    else if(op == L_DEREF)                      // Dereference
         out += ("*" + result + " = " + arg1);
 
     return out;
@@ -245,7 +253,6 @@ void quadArray::print() {
         cout << '-';
     cout << endl;
 
-    int cnt = 0;
     // Print each of the quads one by one
     for(int i = 0; i < (int)quads.size(); i++) {
         if(quads[i].op != FUNC_BEG && quads[i].op != FUNC_END)
@@ -260,11 +267,11 @@ void quadArray::print() {
 }
 
 
+// Implementations of constructors and functions for the expression class
 expression::expression(): fold(0), folder(NULL) {}
 
 
 // Overloaded emit functions
-
 void emit(string result, string arg1, string arg2, opcode op) {
     quad q(result, arg1, arg2, op);
     quadList.quads.push_back(q);
@@ -311,7 +318,7 @@ void backpatch(list<int> l, int address) {
 }
 
 
-// Implementation of the convertToType function
+// Implementation of the overloaded convertToType functions
 void convertToType(expression* arg, expression* res, DataType toType) {
     if(res->type == toType)
         return;
@@ -335,7 +342,6 @@ void convertToType(expression* arg, expression* res, DataType toType) {
             emit(arg->loc, res->loc, "", CtoI);
     }
 }
-
 
 void convertToType(string t, DataType to, string f, DataType from) {
     if(to == from)
@@ -374,6 +380,7 @@ void convertIntToBool(expression* expr) {
 }
 
 
+// Implementation of the sizeOfType function
 int sizeOfType(DataType t) {
     if(t == VOID)
         return __VOID_SIZE;
@@ -391,6 +398,8 @@ int sizeOfType(DataType t) {
         return 0;
 }
 
+
+// Implementation of the checkType function
 string checkType(symbolType t) {
     if(t.type == VOID)
         return "void";
@@ -403,7 +412,7 @@ string checkType(symbolType t) {
     else if(t.type == FUNCTION)
         return "function";
 
-    else if(t.type == POINTER) {
+    else if(t.type == POINTER) {        // Depending on type of pointer
         string tp = "";
         if(t.nextType == CHAR)
             tp += "char";
@@ -415,7 +424,7 @@ string checkType(symbolType t) {
         return tp;
     }
 
-    else if(t.type == ARRAY) {
+    else if(t.type == ARRAY) {          // Depending on type of array
         string tp = "";
         if(t.nextType == CHAR)
             tp += "char";
@@ -440,6 +449,7 @@ string checkType(symbolType t) {
 }
 
 
+// Implementation of the getInitVal function
 string getInitVal(symbol* sym) {
     if(sym->initVal != NULL) {
         if(sym->type.type == INT)

@@ -38,6 +38,9 @@ using namespace std;
 #define __POINTER_SIZE 8
 #define __FLOAT_SIZE 8
 
+/*
+    An enum for all data types
+*/
 typedef enum {
     VOID,
     BOOL,
@@ -49,11 +52,11 @@ typedef enum {
     FUNCTION
 } DataType;
 
-
+/*
+    An enum for all opcodes
+*/
 typedef enum  {
-    // DEFAULT, 
     ADD, SUB, MULT, DIV, MOD, SL, SR, 
-    // LT, GT, EQ, NEQ, LTE, GTE, LOG_AND, LOG_OR, 
     BW_AND, BW_OR, BW_XOR, 
     BW_U_NOT ,U_PLUS, U_MINUS, REFERENCE, DEREFERENCE, U_NEG, 
     GOTO_EQ, GOTO_NEQ, GOTO_GT, GOTO_GTE, GOTO_LT, GOTO_LTE, IF_GOTO, IF_FALSE_GOTO, 
@@ -62,6 +65,16 @@ typedef enum  {
 } opcode;
 
 
+/*
+    Forward Class Declarations
+    --------------------------
+    symbol          Represents an element(entry) in the symbol table
+    symbolType      Represents the type of an element in the symbol table
+    symbolValue     Represents the value stored by a symbol in the symbol table
+    symbolTable     Represents the symbol table data structure itself
+    quad            Denotes a quad in the Three Address Code translation
+    quadArray       Denotes the entire list of quads for lazy spitting
+*/
 class symbol;
 class symbolType;
 class symbolValue;
@@ -77,8 +90,17 @@ class quadArray;
 extern char* yytext;
 extern int yyparse();
 
-extern int nextinstr;
 
+/*
+    Class to represent the type of an element in the symbol table
+    class symbolType
+    ----------------
+    Member Variables:
+        pointers: int               Useful for pointer types
+        type: DataType              The type of the symbol
+        nextType: symbolType        For arrays and pointers, it points to the type of the elements of the array or the pointer
+        dims: vector<int>           For arrays, it stores the dimensions of the array
+*/
 class symbolType {
 public:
     int pointers;
@@ -88,6 +110,16 @@ public:
 };
 
 
+/*
+    Class to represent the value of an element in the symbol table
+    class symbolValue
+    ------------------
+    Member Variables:
+        i: int                 For integers, it stores the value
+        f: float               For floats, it stores the value
+        c: char                For characters, it stores the value
+        p: void*               For pointers, it stores the value
+*/
 class symbolValue {
 public:
     int i;
@@ -101,6 +133,21 @@ public:
 };
 
 
+/*
+    Class to represent an element(entry) in the symbol table
+    class symbol
+    ------------
+    Member Variables:
+        name: string                The name of the symbol
+        type: symbolType            Type of the symbol
+        initVal: symbolValue*       Initial value of the symbol, if any
+        size: int                   Size of the symbol(element)
+        offset: int                 Offset of the symbol in the symbol table
+        nestedTable: symbolTable*   Pointer to a nested symbol table, if any (useful for functions and blocks)
+    Member Methods:
+        symbol()
+        - Constructor
+*/
 class symbol {
 public:
     string name;
@@ -114,6 +161,27 @@ public:
 };
 
 
+/*
+    Class to represent the symbol table data structure
+    class symbolTable
+    ------------
+    Member Variables:
+        table: map<string, symbol*>     List of symbols hashed using their names
+        symbols: vector<symbol*>        List of all symbols present in the symbol table
+        tempCount: int                  Count of temporary variables generated for the symbol table
+        parent: symbolTable*            Pointer to the parent of the symbol table, NULL for the global symbol table
+    Member Methods:
+        symbolTable()
+        - Constructor
+        lookup(string name, DataType t = INT, int pc = 0): symbol*
+        - A method to lookup an id (given its name or lexeme) in the symbol table. If the id exists, the entry is returned, otherwise a new entry is created.
+        searchGlobal(string name): symbol*
+        - A method to search for an id in the global symbol table. If the id exists, the entry is returned, otherwise NULL is returned.
+        gentemp(DataType t = INT): string
+        - A method to generate a new temporary, insert it to the symbol table, and return a pointer to the entry
+        print(): void
+        - Prints the symbol table in a suitable fashion
+*/
 class symbolTable {
 public:
     map<string, symbol*> table;
@@ -130,6 +198,21 @@ public:
 };
 
 
+/*
+    Class to denote a quad in the Three Address Code translation
+    class quad
+    ------------
+    Member Variables:
+        op: string          Operator in the three address code
+        arg1: string        First argument in the three address code
+        arg2: string        Second argument in the three address code
+        result: string      Result of the three address code
+    Member Methods:
+    quad(string, string, string, opcode)
+    - Constructor
+    print(): void
+    - Returns a formatted string to help in printing the quad
+*/
 class quad {
 public:
     opcode op;
@@ -143,6 +226,16 @@ public:
 };
 
 
+/*
+    Class to denote the entire list of quads for lazy spitting
+    class quadArray
+    ------------
+    Member Variables:
+        quads: vector<quads>    A vector of all the quads generated
+    Member Methods:
+        print(): void
+        - Prints the entire list of quads
+*/
 class quadArray {
 public:
     vector<quad> quads;
@@ -151,6 +244,14 @@ public:
 };
 
 
+/*
+    Class to represent a parameter
+    class param
+    ------------
+    Member Variables:
+        name: string        Name of the parameter
+        type: DataType      Type of the parameter
+*/
 class param {
 public:
     string name;
@@ -158,6 +259,23 @@ public:
 };
 
 
+/*
+    Class to denote an expression
+    class expression
+    ------------
+    Member Variables:
+        instr: int                  The instruction number of the expression
+        type: DataType              Type of the expression
+        loc: string                 The symbol table entry 
+        truelist: list<int>         Truelist for boolean expressions
+        falselist: list<int>        Falselist for boolean expressions
+        nextlist: list<int>         Nextlist for statement expressions
+        fold: int                   Useful for arrays and pointers
+        folder: string*             Useful for arrays and pointers
+    Member Methods:
+        expression()
+        - Constructor
+*/
 class expression {
 public:
     int instr;
@@ -173,6 +291,18 @@ public:
 };
 
 
+/*
+    Class to represent a declaration
+    class declaration
+    ------------
+    Member Variables:
+        name: string                Name of the declaration
+        pointers: int               Number of pointers
+        type: DataType              Type of the declaration
+        li: vector<int>             List of instructions for the declaration
+        initVal: expression*        Initial value of the declaration
+        pc: int                     Useful for pointers and arrays
+*/
 class declaration {
 public:
     string name;
@@ -183,7 +313,6 @@ public:
     expression* initVal;
     int pc;
 };
-
 
 
 /*
@@ -231,10 +360,13 @@ void convertIntToBool(expression* expr);
 int sizeOfType(DataType t);
 
 /*
-    Auxilary function to print a type
+    Auxiliary function to print a type
 */
 string checkType(symbolType t);
 
+/*
+    Auxiliary function to get the initial value of a symbol
+*/
 string getInitVal(symbol* sym);
 
 #endif
