@@ -1,47 +1,49 @@
-// Function calls and conditional statements (ternary and if-else)
+// the program tests : function declaration , calling , global variable scope, some operators : / % * ... 
+int printInt (int n);
+int printStr (char * ch);
+int readInt (int *n);
 
-int max (int x, int y) {
-    int ans;
-    if (x > y)                      // if-else
-        ans = x;
-    else
-        ans = y;
+int global_var = 0;		                                               // test : global variable
+int counter =0;
 
-    if(ans < 0)
-        ans = -ans;
-    return ans;
-}
+int fibn (int n);
 
-
-int min (int x, int y) {
-    int ans;
-    ans = x > y ? y:x;              // ternary
-    return ans;
-}
-
-void print (char *ch) {
-    // print the char array
-    return;
-}
-
-void print_greater (int m, int n) {
-    char greater_m[] = "m > n";
-    char greater_n[] = "n > m";
-    m > n ? print(greater_m) : print(greater_n);
-    return;
-}
-
-int add(int a, int b) {
-    int i = min(a, b);            // nested function calls
-    int j = max(a, b);
-    int j = 0;
-    int d = j + i;
-    return d;
-}
-
-int main() {
-    int a, b, sum;
-    a = 1, b = 52;
-    sum = add(a, b);
+int main () {
+	counter++;
+	global_var = counter;
+    int n;
+    printStr("Enter n: ");
+    readInt(&n);
+    int i;
+    int fib[n];
+    // for loop to print the fibonacci series.
+    for (i = 0; i < n; i++) {
+        fib[i] = fibn(i+1);
+        counter++;
+		global_var = counter;
+    }
+    for (i = 0; i < n; i++) {
+        printStr("Fib[i+1] = ");
+        printInt(fib[i]);
+        printStr("\n");
+    }
     return 0;
+}
+
+int fibn (int n) {
+	counter++;
+	global_var = counter;
+
+    if (n == 0) {
+        return 0;
+    }
+ 
+    if (n == 1 || n == 2) {
+        return 1;
+    }
+ 
+    // Recursive function
+    else {
+        return (fibn(n - 1) + fibn(n - 2));
+    }
 }

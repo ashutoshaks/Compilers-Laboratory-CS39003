@@ -1,24 +1,63 @@
-// Nested if else and recursive functions  
+/**  
+ * Tests : pointers , array arithemtic printIntng array elements 
+ * printIntng pointers, pointer rithmetic , operations.
+ */
 
-int fact (int n) {                               // recursive functions
-    if (n == 0) 
-        return 1; 
-    return n * fact(n-1); 
-} 
+int printStr (char *ch);
+int printInt (int n);
+int readInt (int *n);
 
-int main() {  
-    int n;
-    n = -5;
+// Global declarations
+float d = 2.3;
+char c; 
+int i, j, k, l, m, n, o;
+int w[10];                      // 1D array declaration
+int a = 4, *p, b;               // pointer declaration
 
-    if (n > 10) {
-        n = 10;
-    } else {
-        if (n < 0) {                            // nested if-else
-            n = 0;
-        } else {
-            n = 5;
-        }
-    }
-    int fact_n = fact(n); 
-    return 0;  
+// Typecasting and pointers
+void swap (int *xp, int *yp) {                      // test : pointers
+    int temp = *&(*xp);
+    *xp = *yp;
+    *yp = temp;
+    return;
 }
+
+void sort (int *arr, int n) {
+    int i, j, min_idx;
+    i = 0;
+    j = 0;
+    for (i = 0; i < n-1; i++) {
+        min_idx = i;
+        for (j = i+1; j < n; j++) {
+            if (arr[j] < arr[min_idx]) {
+                min_idx = j;
+            }
+        }
+        swap(&arr[min_idx], &arr[i]);
+    }
+    return;
+}
+
+int main() {
+    int arr[6];
+    printStr("Enter 6 array elements: ");
+    for (i = 0; i < 6; i++) {  
+        readInt(&arr[i]);      
+    }
+
+    // test :  print numbers
+    printStr("Entered array is :");
+    for (i = 0; i < 6; i++) {  
+        printInt(arr[i]);
+        printStr("\n");         
+    }
+    int n = 6;
+    sort(arr, 5);
+    printStr("Sorted array is :");
+    for (i = 0; i < 6; i++) {  
+        printInt(arr[i]);
+        printStr("\n");         
+    }
+    return 0;
+}
+

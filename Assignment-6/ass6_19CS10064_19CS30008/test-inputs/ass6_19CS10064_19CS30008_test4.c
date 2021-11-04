@@ -1,37 +1,46 @@
-// Typecasting and pointers
-void swap (int *xp, int *yp) {                      // pointers
-    int temp = *xp;
-    *xp = *yp;
-    *yp = temp;
-    return;
-}
+// include predefined functions 
 
-void sort (int *arr, int n) {
-    int i, j, min_idx;
-    i = 0;
-    j = 0;
-    for (i = 0; i < n-1; i++) {
-        min_idx = i;
-        for (j = i+1; j < n; j++) {
-            if (arr[j] < arr[min_idx]) {
-                min_idx = j;
-            }
+int printStr (char *ch);
+int printInt (int n);
+int readInt (int *n);
+
+// Global declarations
+float d = 2.3;
+char c; 
+int i, j, k, l, m, n, o;
+int w[10];                      // 1D array declaration
+int a = 4, *p, b;               // pointer declaration
+
+int maxSubArrSum (int a[], int n) { 
+    int max_so_far = -1000, max_ending_here = 0; 
+    int i;
+    for (i = 0; i < n; i++) { 
+        max_ending_here = max_ending_here + a[i]; 
+        if (max_so_far < max_ending_here) {
+            max_so_far = max_ending_here; 
         }
-        swap(&arr[min_idx], &arr[i]);
-    }
-    return;
-}
-
-int main() {
-    int arr[6];
-    arr[0] = 1.3;                                   // type casting float -> int
-    arr[1] = -4.5;
-    arr[2] = (int)7.34;
-    arr[3] =  8.56;
-    arr[4] = -342.0;
-    arr[5] = 0.6;
-    int n = 6;
-    sort(arr, 5);
-    
-    return 0;
+  
+        if (max_ending_here < 0) {
+            max_ending_here = 0; 
+        }
+    } 
+    return max_so_far; 
+} 
+  
+//Driver program to test maxSubArrSum
+int main() { 
+    int a[8];
+    a[0]= -20;
+    a[1]= -30;
+    a[2]= 40;
+    a[3]= -10;
+    a[4]= -20;
+    a[5]= 10;
+    a[6]= 50;
+    a[7]= -370;
+    int max_subArr_sum = maxSubArrSum(a, 8); 
+    printStr("Maximum contiguous sum is ");
+    printInt(max_subArr_sum);
+    printStr("\n");
+    return 0; 
 }
