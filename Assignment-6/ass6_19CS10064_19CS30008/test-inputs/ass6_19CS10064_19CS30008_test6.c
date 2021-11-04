@@ -27,8 +27,8 @@ int main() {
             printInt(w);
             { 
                 int w = 3;
-                if (w = 9) {
-                    printStr("\nEntered in the w = 9 condition if block.");
+                if (w == 3) {
+                    printStr("\nEntered in the w == 3 condition if block.");
                 }
                 printStr("\nScope 3: ");
                 printInt(w);
