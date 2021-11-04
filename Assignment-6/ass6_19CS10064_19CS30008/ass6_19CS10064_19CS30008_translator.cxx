@@ -46,7 +46,6 @@ symbol::symbol(): nestedTable(NULL) {}
 // Implementations of constructors and functions for the symbolTable class
 symbolTable::symbolTable(): offset(0) {}
 
-
 symbol* symbolTable::lookup(string name, DataType t, int pc) {
     if(table.count(name) == 0) {
         symbol* sym = new symbol();
@@ -71,11 +70,9 @@ symbol* symbolTable::lookup(string name, DataType t, int pc) {
     return table[name];
 }
 
-
 symbol* symbolTable::searchGlobal(string name) {
     return (table.count(name) ? table[name] : NULL);
 }
-
 
 string symbolTable::gentemp(DataType t) {
     // Create the name for the temporary
@@ -155,7 +152,6 @@ void symbolTable::print(string tableName) {
 
 // Implementations of constructors and functions for the quad class
 quad::quad(string res_, string arg1_, string arg2_, opcode op_): op(op_), arg1(arg1_), arg2(arg2_), result(res_) {}
-
 
 string quad::print() {
     string out = "";
@@ -367,7 +363,6 @@ void convertToType(string t, DataType to, string f, DataType from) {
     }
 }
 
-
 // Implementation of the convertIntToBool function
 void convertIntToBool(expression* expr) {
     if(expr->type != BOOL) {
@@ -378,7 +373,6 @@ void convertIntToBool(expression* expr) {
         emit("", "", "", GOTO);
     }
 }
-
 
 // Implementation of the sizeOfType function
 int sizeOfType(DataType t) {
@@ -397,7 +391,6 @@ int sizeOfType(DataType t) {
     else
         return 0;
 }
-
 
 // Implementation of the checkType function
 string checkType(symbolType t) {
@@ -447,7 +440,6 @@ string checkType(symbolType t) {
     else
         return "unknown";
 }
-
 
 // Implementation of the getInitVal function
 string getInitVal(symbol* sym) {

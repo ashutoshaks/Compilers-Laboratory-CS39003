@@ -4,7 +4,7 @@
 * Compilers Laboratory
 * Assignment 6
 *
-* Library Fuctions
+* Library Functions for reading and printing
 */
 
 #include "myl.h"

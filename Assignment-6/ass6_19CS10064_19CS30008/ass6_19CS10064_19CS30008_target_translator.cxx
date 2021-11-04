@@ -13,11 +13,12 @@
 #include <stack>
 using namespace std;
 
-
+// External variables
 extern symbolTable globalST;
 extern symbolTable* ST;
 extern quadArray quadList;
 
+// Declare global variables
 vector<string> stringConsts;
 map<int, string> labels;
 stack<pair<string, int>> parameters;
@@ -26,6 +27,7 @@ string funcRunning = "";
 string asmFileName;
 
 
+// Prints the global information to the assembly file
 void printGlobal(ofstream& sfile) {
     for(vector<symbol*>::iterator it = globalST.symbols.begin(); it != globalST.symbols.end(); it++) {
         symbol* sym = *it;
@@ -57,7 +59,7 @@ void printGlobal(ofstream& sfile) {
     }
 }
 
-
+// Prints all the strings used in the program to the assembly file
 void printStrings(ofstream& sfile) {
     sfile << ".section\t.rodata" << endl;
     int i = 0;
@@ -67,7 +69,7 @@ void printStrings(ofstream& sfile) {
     }
 }
 
-
+// Generates labels for different targets of goto statements
 void setLabels() {
     int i = 0;
     for(vector<quad>::iterator it = quadList.quads.begin(); it != quadList.quads.end(); it++) {
@@ -82,7 +84,8 @@ void setLabels() {
     }
 }
 
-
+// Generates the function prologue to be printed before each function
+// Generic tasks like allocating space for variables on the stack are performed here
 void generatePrologue(int memBind, ofstream& sfile) {
     int width = 16;
     sfile << endl << "\t.text" << endl;
@@ -94,7 +97,7 @@ void generatePrologue(int memBind, ofstream& sfile) {
     sfile << "\tsubq\t$" << (memBind / width + 1) * width << ", %rsp" << endl;
 }
 
-
+// Generates assembly code for a given three address quad
 void quadCode(quad q, ofstream& sfile) {
     string strLabel = q.result;
     bool hasStrLabel = (q.result[0] == '.' && q.result[1] == 'L' && q.result[2] == 'C');
@@ -373,6 +376,7 @@ void quadCode(quad q, ofstream& sfile) {
         int numParams = atoi(q.arg1.c_str());
         int totalSize = 0, k = 0;
 
+        // We need different registers based on the parameters
         if(numParams > 6) {
             for(int i = 0; i < numParams - 6; i++) {
                 string s = parameters.top().first;
@@ -447,7 +451,7 @@ void quadCode(quad q, ofstream& sfile) {
 
 }
 
-
+// Main function which calls all other relevant functions for generating the target assembly code
 void generateTargetCode(ofstream& sfile) {
     printGlobal(sfile);
     printStrings(sfile);
@@ -456,9 +460,12 @@ void generateTargetCode(ofstream& sfile) {
     setLabels();
 
     for(int i = 0; i < (int)quadList.quads.size(); i++) {
+        // Print the quad as a comment in the assembly file
         sfile << "# " << quadList.quads[i].print() << endl;
         if(labels.count(i))
             sfile << labels[i] << ":" << endl;
+
+        // Necessary tasks for a function
         if(quadList.quads[i].op == FUNC_BEG) {
             i++;
             if(quadList.quads[i].op != FUNC_END)
@@ -495,6 +502,8 @@ void generateTargetCode(ofstream& sfile) {
             funcRunning = quadList.quads[i].result;
             generatePrologue(memBind, sfile);
         }
+
+        // Function epilogue (while leaving a function)
         else if(quadList.quads[i].op == FUNC_END) {
             ST = &globalST;
             funcRunning = "";
@@ -508,7 +517,6 @@ void generateTargetCode(ofstream& sfile) {
     }
 }
 
-
 int main(int argc, char* argv[]) {
     ST = &globalST;
     yyparse();
@@ -517,13 +525,13 @@ int main(int argc, char* argv[]) {
     ofstream sfile;
     sfile.open(asmFileName);
 
-    quadList.print();
+    quadList.print();               // Print the three address quads
 
-    ST->print("ST.global");
+    ST->print("ST.global");         // Print the symbol tables
 
     ST = &globalST;
 
-    generateTargetCode(sfile);
+    generateTargetCode(sfile);      // Generate the target assembly code
 
     sfile.close();
 
